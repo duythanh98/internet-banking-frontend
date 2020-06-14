@@ -1,0 +1,31 @@
+const games = [
+  { id: 1, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'ABC', content: 'info1', link: 'Home' },
+  { id: 2, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'CCC', content: 'info2', link: 'Home' },
+  { id: 3, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'DDD', content: 'info3', link: '' },
+  { id: 4, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'KKK', content: 'info4', link: '' },
+  { id: 5, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SSSSSSSSSSSSSSSSSSS', content: 'info5', link: '' },
+  { id: 6, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SSSSS', content: 'info6', link: '' },
+  { id: 7, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SSSSSS', content: 'info7', link: '' },
+  { id: 8, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SSSSSAS', content: 'info8', link: '' },
+  { id: 9, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info9', link: '' },
+  { id: 10, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info10', link: '' },
+  { id: 11, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info11', link: '' },
+  { id: 12, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info12', link: '' },
+  { id: 13, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info13', link: '' },
+  { id: 14, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info14', link: '' },
+  { id: 15, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info15', link: '' },
+  { id: 16, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info16', link: '' },
+  { id: 17, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info17', link: '' },
+  { id: 18, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info18', link: '' },
+  { id: 19, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info19', link: '' },
+  { id: 20, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info20', link: '' },
+  { id: 21, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info21', link: '' },
+  { id: 22, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info22', link: '' },
+  { id: 23, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info23', link: '' },
+  { id: 24, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info24', link: '' },
+  { id: 25, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info25', link: '' },
+  { id: 26, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info26', link: '' },
+  { id: 27, img: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg', name: 'SAASAAAS', content: 'info27', link: '' }
+];
+
+export default games;
