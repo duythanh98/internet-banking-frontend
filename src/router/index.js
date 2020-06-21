@@ -130,6 +130,16 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    path: '/accounts',
+    components: () => import('@/views/accounts/page'),
+    name: 'Account',
+    meta: {
+      title: 'Tài khoản',
+      icon: 'user',
+      roles: ['admin', 'employee']
+    }
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',

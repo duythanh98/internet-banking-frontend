@@ -6,4 +6,17 @@ export default class UserApi extends BaseApi {
 
     return this.get();
   }
+
+  getReminders(id = 'me') {
+    this.setUrl(`/users/${id}/reminders`);
+
+    return this.get();
+  }
+
+  deleteReminder(id = 'me') {
+    this.setUrl(`/users/${id}/reminders`);
+    this.setData({});
+
+    return this.delete();
+  }
 }
