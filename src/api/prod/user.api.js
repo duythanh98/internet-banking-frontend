@@ -6,4 +6,9 @@ export default class UserApi extends BaseApi {
 
     return this.get();
   }
+
+  getMyAccount() {
+    this.setUrl(`/users/me/account`);
+    return this.get();
+  }
 }

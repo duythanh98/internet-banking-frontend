@@ -1,4 +1,3 @@
-import { logout } from '@/api/user';
 import { getToken, setToken, removeToken } from '@/utils/auth';
 import router, { resetRouter } from '@/router';
 import LoginApi from '@/api/prod/login.api';
@@ -9,7 +8,8 @@ const state = {
   refresh_token: getToken(false),
   name: '',
   info: {},
-  roles: []
+  roles: [],
+  accountInfo: {}
 };
 
 const mutations = {
@@ -27,6 +27,9 @@ const mutations = {
   SET_INFO: (state, info) => {
     state.info = info;
   },
+  SET_ACCOUNT_INFO: (state, info) => {
+    state.accountInfo = info;
+  },
   SET_ROLES: (state, roles) => {
     state.roles = roles;
   }
@@ -40,7 +43,7 @@ const actions = {
     const api = new LoginApi();
     const res = await api.login(username, password);
     if (res.isFailed()) {
-      if (res.status() === 401) {
+      if (res.status() === 422) {
         throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
       }
 
@@ -56,7 +59,7 @@ const actions = {
   },
 
   // get user info
-  async getInfo({ commit, state }) {
+  async getInfo({ commit, state, dispatch }) {
     const api = new UserApi();
     api.setToken(state.token);
 
@@ -79,31 +82,61 @@ const actions = {
       default: commit('SET_ROLES', ['customer']);
     }
 
+    await dispatch('getAccountInfo');
+
+    return result;
+  },
+
+  async getAccountInfo({ commit, state }) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.getMyAccount();
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    commit('SET_ACCOUNT_INFO', result);
+
     return result;
   },
 
   async refreshToken({ commit, state }) {
+    const refreshToken = state.refresh_token;
 
+    const api = new LoginApi();
+
+    const res = await api.refresh(refreshToken);
+
+    if (res.isFailed()) {
+      throw new Error('Không thể làm mới phiên đăng nhập');
+    }
+
+    const result = res.result();
+
+    commit('SET_TOKEN', result.access_token);
+
+    return result.access_token;
   },
 
   // user logout
   logout({ commit, state, dispatch }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '');
-        commit('SET_ROLES', []);
-        removeToken();
-        resetRouter();
+    commit('SET_TOKEN', '');
+    commit('SET_ROLES', []);
 
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-        dispatch('tagsView/delAllViews', null, { root: true });
+    dispatch('tagsView/delAllViews', null, { root: true });
 
-        resolve();
-      }).catch(error => {
-        reject(error);
-      });
-    });
+    removeToken(true);
+    removeToken(false);
+
+    resetRouter();
   },
 
   // remove token

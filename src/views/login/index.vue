@@ -1,7 +1,6 @@
 <template>
-  <div class="login-container">
+  <div v-loading="refreshLogin && hasToken" class="login-container" element-loading-text="Đang đăng nhập...">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
       <div class="title-container">
         <h3 class="title">Đăng nhập</h3>
       </div>
@@ -51,6 +50,7 @@
 </template>
 
 <script>
+import router from '@/router';
 
 export default {
   name: 'Login',
@@ -75,16 +75,28 @@ export default {
         password: ''
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        username: [{ required: true, trigger: 'change', validator: validateUsername }],
+        password: [{ required: true, trigger: 'change', validator: validatePassword }]
       },
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      refreshLogin: false
     };
+  },
+  computed: {
+    accessToken() {
+      return this.$store.state.user.token;
+    },
+    refreshToken() {
+      return this.$store.state.user.refresh_token;
+    },
+    hasToken() {
+      return this.accessToken && this.refreshToken;
+    }
   },
   watch: {
     $route: {
@@ -99,7 +111,9 @@ export default {
     }
   },
   created() {
-    // window.addEventListener('storage', this.afterQRScan)
+    if (this.hasToken) {
+      this.refreshLoginSession();
+    }
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -112,6 +126,19 @@ export default {
     // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
+    refreshLoginSession() {
+      this.refreshLogin = true;
+      // try to get user info
+      this.$store.dispatch('user/getInfo')
+        .then(() => this.applyRoute().then(() => this.$router.push({ path: this.redirect || '/', query: this.otherQuery })))
+        // if cant must be refresh and then get again
+        .catch(() => this.$store.dispatch('user/refreshToken').then(() => this.refreshLoginSession()))
+        // if you cant refresh, clear all data
+        .catch(() => this.$store.dispatch('user/resetToken'))
+        .finally(() => {
+          this.refreshLogin = false;
+        });
+    },
     checkCapslock(e) {
       const { key } = e;
       this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z');
@@ -131,6 +158,8 @@ export default {
         if (valid) {
           this.loading = true;
           this.$store.dispatch('user/login', this.loginForm)
+            .then(() => this.$store.dispatch('user/getInfo'))
+            .then(() => this.applyRoute())
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery });
               this.loading = false;
@@ -149,6 +178,10 @@ export default {
         }
         return acc;
       }, {});
+    },
+    async applyRoute() {
+      const accessRoutes = await this.$store.dispatch('permission/generateRoutes', this.$store.state.user.roles);
+      router.addRoutes(accessRoutes);
     }
   }
 };
