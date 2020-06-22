@@ -153,7 +153,16 @@ export default {
         this.$refs.password.focus();
       });
     },
-    handleLogin() {
+    async handleLogin() {
+      // await this.$recaptchaLoaded();
+
+      // // Execute reCAPTCHA with action "login".
+      // const token = await this.$recaptcha('login');
+      // console.log(token);
+      // if (!token) {
+      //   return;
+      // }
+
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
