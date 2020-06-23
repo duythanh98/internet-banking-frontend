@@ -10,4 +10,13 @@ export default class LoginApi extends BaseApi {
 
     return this.post();
   }
+  refresh(refreshToken) {
+    this.setUrl('/auth/refresh');
+
+    this.setData({
+      refresh_token: refreshToken
+    });
+
+    return this.post();
+  }
 }

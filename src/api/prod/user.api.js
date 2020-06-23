@@ -19,4 +19,9 @@ export default class UserApi extends BaseApi {
 
     return this.delete();
   }
+
+  getMyAccount() {
+    this.setUrl(`/users/me/account`);
+    return this.get();
+  }
 }

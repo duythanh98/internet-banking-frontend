@@ -140,6 +140,26 @@ export const asyncRoutes = [
     }
   },
   {
+    path: '/transfer',
+    component: Layout,
+    meta: {
+      title: 'Chuyển khoản',
+      icon: 'lock',
+      roles: ['customer']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/transfer'),
+        name: 'Transfer',
+        meta: {
+          title: 'Chuyển khoản',
+          icon: 'lock'
+        }
+      }
+    ]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
