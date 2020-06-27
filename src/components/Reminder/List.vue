@@ -7,7 +7,7 @@
             <el-input
               v-model="filter.keyword"
               class="filter-item"
-              :placeholder="$t('Tìm kiếm')"
+              placeholder="Tìm kiếm"
               style="width: 200px;"
               @keyup.enter.native="handleFilter"
             />
@@ -18,7 +18,7 @@
               type="primary"
               icon="el-icon-search"
               @click="handleFilter"
-            >{{ $t('Tìm kiếm') }}</el-button>
+            >Tìm kiếm</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -30,14 +30,14 @@
           type="success"
           icon="el-icon-circle-plus"
           @click="$router.push({name: 'AddReminder'})"
-        >{{ $t('Thêm mới') }}</el-button>
+        >Thêm mới</el-button>
         <el-button
           class="filter-item"
           style="margin-left: 10px;"
           type="primary"
           icon="el-icon-refresh"
           @click="reload"
-        >{{ $t('Tải lại') }}</el-button>
+        >Tải lại</el-button>
       </el-col>
     </el-row>
 
@@ -58,7 +58,7 @@
       <el-table-column label="Lời nhắc" prop="note" sortable />
       <el-table-column label="Trạng thái" prop="status" sortable />
       <el-table-column label="Ngày tạo" prop="created_at" sortable />
-      <el-table-column :label="$t('Thao tác')" align="center">
+      <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
             type="primary"
@@ -67,9 +67,9 @@
             @click="$router.push({name: 'EditReminder', params: {id: row.id}})"
           />
           <el-popconfirm
-            :title="$t('Bạn có muốn xoá lời nhắc này không?')"
-            :confirm-button-text="$t('Đồng ý')"
-            :cancel-button-text="$t('Không')"
+            title="Bạn có muốn xoá lời nhắc này không?"
+            confirm-button-text="Đồng ý"
+            cancel-button-text="Không"
             @onConfirm="remove(row.id)"
           >
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="small" />
@@ -113,42 +113,42 @@ export default {
       loading: false,
       filterRules: {
         keyword: [
-          { min: 1, max: 32, message: this.$t('Từ khoá từ {min} tới {max} kí tự', { min: 1, max: 32 }), trigger: 'change' }
+          { min: 1, max: 32, message: 'Từ khoá từ 1 tới 32 kí tự', trigger: 'change' }
         ]
       },
       sorts: []
     };
   },
+  created() {
+    this.reload();
+  },
   methods: {
     async reload() {
       this.loading = true;
-      this.$store.dispatch('getReminders')
-        .then((result) => {
-          this.pagination = result;
-          this.loading = false;
-          this.isLoaded = true;
-          this.$emit('reload-completed');
-        })
-        .catch((err) => {
-          this.$notify.error(err.message);
-          this.loading = false;
-        });
+      try {
+        const result = await this.$store.dispatch('user/getReminders', { id: 'me' });
 
-      // const response = await api.getReminders(
-      //   this.pagination.per_page,
-      //   this.pagination.current_page,
-      //   this.sorts
-      // );
+        this.pagination = result;
+        this.loading = false;
+        this.isLoaded = true;
+
+        this.$emit('reload-completed');
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      } finally {
+        this.loading = false;
+      }
     },
     async remove(id) {
-      this.$store.dispatch('getReminders', { id })
-        .then(() => {
-          this.$notify.success({ message: this.$t('Xoá thành công'), position: 'bottom-right' });
-          this.reload();
-        })
-        .catch((err) => {
-          this.$notify.error(err.message);
-        });
+      try {
+        await this.$store.dispatch('user/deleteReminder', { userId: 'me', reminderId: id });
+
+        this.$notify.success({ message: 'Xoá thành công', position: 'bottom-right' });
+        this.reload();
+        this.$emit('reload-completed');
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      }
     },
     load() {
       if (!this.isLoaded) {

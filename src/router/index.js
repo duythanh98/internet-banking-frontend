@@ -160,6 +160,33 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/reminders',
+    component: Layout,
+    meta: {
+      title: 'Nhắc nợ',
+      icon: 'user',
+      roles: ['customer']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/reminders/page'),
+        name: 'ReminderList',
+        meta: {
+          title: 'Danh sách nhắc nợ'
+        }
+      },
+      {
+        path: 'new',
+        component: () => import('@/views/reminders/add'),
+        name: 'AddReminder',
+        meta: {
+          title: 'Thêm nhắc nợ'
+        }
+      }
+    ]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',

@@ -213,11 +213,30 @@ const actions = {
     return result;
   },
 
+  async createReminder({ commit, state }, form) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.createReminder(form);
+    console.log(res);
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
   async deleteReminder({ commit, state }, form) {
     const api = new UserApi();
     api.setToken(state.token);
 
-    const res = await api.deleteReminder(form.id);
+    const res = await api.deleteReminder(form);
     console.log(res);
     if (res.isFailed()) {
       if (res.status() === 401) {
