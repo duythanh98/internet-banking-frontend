@@ -8,6 +8,7 @@
     </el-steps>
     <step-1 v-show="step === 0" v-model="transferForm" :current-account="$store.getters.account" :fee="fee" @next-step="goToOTPStep" />
     <step-2 v-show="step === 1" v-model="otp" :transfer="transfer" @next-step="transferNow" @cancel="cancel" />
+    <step-3 v-show="step === 3" :account-number="transferForm.account_number" :account-name="transferForm.account_name" @new-transaction="newTransaction" />
   </div>
 </template>
 <script>
@@ -15,12 +16,14 @@ import top from '../top';
 import TransferApi from '@/api/prod/transfer.api';
 import step_1 from './step-1';
 import step_2 from './step-2';
+import step_3 from './step-3';
 
 export default {
   components: {
     top,
     'step-1': step_1,
-    'step-2': step_2
+    'step-2': step_2,
+    'step-3': step_3
   },
   props: {
     fee: {
@@ -56,6 +59,18 @@ export default {
     };
   },
   methods: {
+    resetForm() {
+      this.transferForm = {
+        account_number: '',
+        account_name: '',
+        amount: 50000,
+        sender_pay_fee: true
+      };
+    },
+    newTransaction() {
+      this.resetForm();
+      this.step = 0;
+    },
     async createTransfer() {
       const api = new TransferApi();
       api.setToken(this.$store.getters.token);
@@ -100,11 +115,28 @@ export default {
       this.step = 0;
     },
     async transferNow() {
+      this.stepProcessing = true;
+      this.step = 2;
+
       const otp = this.otp;
       const transfer = new TransferApi();
       transfer.setToken(this.$store.getters.token);
 
-      transfer.acceptTransfer(this.transfer.transfer_id, otp);
+      const res = await transfer.acceptTransfer(this.transfer.transfer_id, otp, this.transfer.transfer_code);
+
+      this.stepProcessing = false;
+
+      if (res.isFailed()) {
+        switch (res.status()) {
+          case 422: this.$notify.error('Bạn không đủ tiền thực hiện giao dịch này'); break;
+          case 410: this.$notify.error('Hết thời gian nhập mã OTP'); break;
+          default: this.$notify.error('Có lỗi xảy ra, hãy thử lại sau');
+        }
+
+        return this.cancel();
+      }
+
+      this.step = 3;
     }
   }
 };

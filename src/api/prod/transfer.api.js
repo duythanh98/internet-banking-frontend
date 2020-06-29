@@ -14,9 +14,9 @@ export default class TransferApi extends BaseApi {
     return this.post();
   }
 
-  acceptTransfer(id, otp) {
+  acceptTransfer(id, otp, transferCode) {
     this.setUrl(`/transfers/${id}`);
-    this.setData({ otp_code: otp });
+    this.setData({ otp_code: otp, transfer_code: transferCode });
     return this.post();
   }
 }
