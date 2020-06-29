@@ -29,7 +29,7 @@
           style="margin-left: 10px;"
           type="success"
           icon="el-icon-circle-plus"
-          @click="$router.push({name: 'AddReminder'})"
+          @click="$router.push({name: 'AddContact'})"
         >Thêm mới</el-button>
         <el-button
           class="filter-item"
@@ -52,22 +52,18 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="ID" prop="id" sortable align="center" width="145" />
-      <el-table-column label="Người nhắc nợ" prop="from_name" sortable />
-      <el-table-column label="Người nợ" prop="to_name" sortable />
-      <el-table-column label="Số tiền" prop="amount" sortable />
-      <el-table-column label="Lời nhắc" prop="note" sortable />
-      <el-table-column label="Trạng thái" prop="status" sortable />
-      <el-table-column label="Ngày tạo" prop="created_at" sortable />
+      <el-table-column label="Số tài khoản" prop="account" sortable />
+      <el-table-column label="Tên gợi nhớ" prop="name" sortable />
       <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
             type="primary"
             icon="el-icon-edit"
             size="small"
-            @click="$router.push({name: 'EditReminder', params: {id: row.id}})"
+            @click="$router.push({name: 'EditContact', params: {id: row.id}})"
           />
           <el-popconfirm
-            title="Bạn có muốn xoá lời nhắc này không?"
+            title="Bạn có muốn xoá người nhận này không?"
             confirm-button-text="Đồng ý"
             cancel-button-text="Không"
             @onConfirm="remove(row.id)"
@@ -99,9 +95,7 @@ export default {
   directives: { waves, permission },
   data() {
     return {
-      dialogTableVisible: false,
       isLoaded: false,
-      submitting: false,
       pagination: {
         data: [],
         total: 0,
@@ -128,7 +122,7 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch('user/getReminders', { id: 'me' });
+        const result = await this.$store.dispatch('user/getContacts');
 
         this.pagination = result;
         this.loading = false;
@@ -143,7 +137,7 @@ export default {
     },
     async remove(id) {
       try {
-        await this.$store.dispatch('user/deleteReminder', { userId: 'me', reminderId: id });
+        await this.$store.dispatch('user/deleteContact', { userId: 'me', contactId: id });
 
         this.$notify.success({ message: 'Xoá thành công', position: 'bottom-right' });
         this.reload();

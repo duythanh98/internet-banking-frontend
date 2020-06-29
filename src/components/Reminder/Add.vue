@@ -74,18 +74,17 @@ export default {
 
     return {
       form: {
-        account: '',
+        account_number: '',
         account_name: '',
         amount: '',
         note: '',
         status: ''
       },
-      icon: null,
       isLoaded: false,
       submitting: false,
       accountLoading: false,
       formValidateResult: {
-        account: false,
+        account_number: false,
         account_name: false,
         amount: false,
         note: false,
@@ -132,7 +131,7 @@ export default {
         await this.$store.dispatch('user/createReminder', this.form);
         this.reset('form');
 
-        this.$notify.success({ message: this.$t('Thêm mới thành công'), position: 'bottom-right' });
+        this.$notify.success({ message: 'Thêm mới thành công', position: 'bottom-right' });
         this.$router.push({ name: 'ListCountry' });
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
