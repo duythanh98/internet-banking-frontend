@@ -6,4 +6,10 @@ export default class AccountApi extends BaseApi {
 
     return this.get();
   }
+
+  getExternalAccount(accountNumber, bankId) {
+    this.setUrl(`/banks/${bankId}/${accountNumber}`);
+
+    return this.get();
+  }
 }
