@@ -4,16 +4,22 @@
       <el-tab-pane key="internal" label="Chuyển tiền nội bộ" name="internal">
         <internal :fee="fee" />
       </el-tab-pane>
+      <el-tab-pane key="external" label="Chuyển tiền liên ngân hàng" name="external">
+        <external :fee="fee" />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
 import internal from './components/internal/index';
+import external from './components/external/index';
+
 import TransferApi from '@/api/prod/transfer.api';
 
 export default {
   components: {
-    internal
+    internal,
+    external
   },
   data() {
     return {

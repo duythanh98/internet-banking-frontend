@@ -8,7 +8,7 @@
     </el-steps>
     <step-1 v-show="step === 0" v-model="transferForm" :current-account="$store.getters.account" :fee="fee" @next-step="goToOTPStep" />
     <step-2 v-show="step === 1" v-model="otp" :transfer="transfer" @next-step="transferNow" @cancel="cancel" />
-    <step-3 v-show="step === 3" :account-number="transferForm.account_number" :account-name="transferForm.account_name" @new-transaction="newTransaction" />
+    <step-3 v-show="step === 3" :account-number="transferForm.account_number" :account-name="transferForm.account_name" :bank-id="transferForm.bank_id" @new-transaction="newTransaction" />
   </div>
 </template>
 <script>
@@ -42,7 +42,8 @@ export default {
         account_number: '',
         account_name: '',
         amount: 50000,
-        sender_pay_fee: true
+        sender_pay_fee: true,
+        bank_id: null
       },
       loading: false,
       formValidateResult: {
@@ -74,9 +75,10 @@ export default {
     async createTransfer() {
       const api = new TransferApi();
       api.setToken(this.$store.getters.token);
-      const res = await api.internalTransfer(
+      const res = await api.externalTransfer(
         this.$store.getters.account,
         this.transferForm.account_number,
+        this.transferForm.bank_id,
         this.transferForm
       );
 

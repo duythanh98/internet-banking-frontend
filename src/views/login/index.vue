@@ -131,7 +131,7 @@ export default {
       // try to get user info
       this.$store.dispatch('user/getInfo')
         .then(() => this.applyRoute().then(() => this.$router.push({ path: this.redirect || '/', query: this.otherQuery })))
-        // if cant must be refresh and then get again
+        // if cant, must be refresh and then get again
         .catch(() => this.$store.dispatch('user/refreshToken').then(() => this.refreshLoginSession()))
         // if you cant refresh, clear all data
         .catch(() => this.$store.dispatch('user/resetToken'))
@@ -171,10 +171,11 @@ export default {
             .then(() => this.applyRoute())
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery });
-              this.loading = false;
             })
             .catch((err) => {
               this.$notify.error(err.message);
+            })
+            .finally(() => {
               this.loading = false;
             });
         }

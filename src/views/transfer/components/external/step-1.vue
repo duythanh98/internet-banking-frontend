@@ -1,14 +1,21 @@
 <template>
   <el-form ref="transferForm" :model="transferForm" :rules="validationRules" label-position="top" @validate="validated">
-    <el-row :gutter="20">
-      <el-col :md="12" :xs="24">
+    <el-row :gutter="10">
+      <el-col :md="8" :xs="24">
         <el-form-item prop="account_number" label="Số tài khoản người nhận">
-          <el-input v-model.trim="transferForm.account_number" maxlength="16" @input="onAccountChange" @change="onAccountChange">
+          <el-input v-model.trim="transferForm.account_number" maxlength="16" @change="onAccountChange">
             <el-button slot="append" icon="el-icon-notebook-1" @click="showContactsList" />
           </el-input>
         </el-form-item>
       </el-col>
-      <el-col :md="12" :xs="24">
+      <el-col :md="8" :xs="24">
+        <el-form-item prop="bank_name" label="Ngân hàng">
+          <el-input v-model="transferForm.bank_name" readonly="readonly">
+            <el-button slot="append" icon="el-icon-notebook-1" @click="isBanksListShowing = true" />
+          </el-input>
+        </el-form-item>
+      </el-col>
+      <el-col :md="8" :xs="24">
         <el-form-item prop="account_name" label="Tên người nhận">
           <el-input v-model="transferForm.account_name" readonly="readonly">
             <el-button v-if="accountLoading" slot="prepend" icon="el-icon-loading" />
@@ -39,7 +46,7 @@
       <el-col :md="12" :xs="24">
         <ul class="small">
           <li>Phí giao dịch: <strong>{{ transferFee | toThousandFilter }}đ</strong></li>
-          <li>Người gửi trả: <strong>{{ senderAmount | toThousandFilter }}đ</strong></li>
+          <li>Bạn trả: <strong>{{ senderAmount | toThousandFilter }}đ</strong></li>
           <li>Người nhận hưởng: <strong>{{ receiverAmount | toThousandFilter }}đ</strong></li>
         </ul>
       </el-col>
@@ -63,13 +70,22 @@
         />
       </div>
     </el-dialog>
+    <el-dialog title="Danh sách ngân hàng" :visible.sync="isBanksListShowing" width="60%">
+      <el-table :data="fee.external" @row-click="bankClick">
+        <el-table-column property="bank_name" label="Tên ngân hàng" header-align="center" />
+        <el-table-column property="transfer_fee" align="right" header-align="center" label="Phí chuyển khoản">
+          <template slot-scope="{ row }">
+            {{ row.transfer_fee | toThousandFilter }}
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </el-form>
 </template>
 <script>
 
 import AccountApi from '@/api/prod/account.api';
 import ContactApi from '../../../../api/prod/contact.api';
-// import TransferApi from '@/api/prod/transfer.api';
 
 export default {
   props: {
@@ -80,7 +96,9 @@ export default {
           account_number: '',
           account_name: '',
           amount: 50000,
-          sender_pay_fee: true
+          sender_pay_fee: true,
+          bank_id: null,
+          bank_name: ''
         };
       }
     },
@@ -88,7 +106,7 @@ export default {
       type: Object,
       default() {
         return {
-          internal: 5000
+          external: []
         };
       }
     },
@@ -117,8 +135,8 @@ export default {
     };
 
     const accountNumberValidator = (rule, value, cb) => {
-      if (!value || !/^\d{16}$/.test(value)) {
-        return cb(new Error('Số tài khoản gồm 16 chữ số'));
+      if (!value || !/^\d+$/.test(value)) {
+        return cb(new Error('Số tài khoản chỉ bao gồm kí tự số'));
       }
 
       if (value === this.currentAccount) {
@@ -134,6 +152,8 @@ export default {
       contactLists: {},
       isContactsListLoaded: false,
       contactsListPage: 1,
+
+      isBanksListShowing: false,
       validationRules: {
         account_number: [
           {
@@ -155,13 +175,21 @@ export default {
           validator(rule, value, cb) {
             return cb(value && value.length > 0 && value.length <= 150 ? undefined : new Error('Ghi chú từ 1 - 150 kí tự'));
           }
+        }],
+        bank_name: [{
+          required: true,
+          trigger: 'change',
+          validator(rule, value, cb) {
+            return cb(value ? undefined : new Error('Vui lòng chọn ngân hàng'));
+          }
         }]
       },
       formValidateResult: {
         account_number: false,
         account_name: false,
         amount: true,
-        note: false
+        note: false,
+        bank_name: false
       }
     };
   },
@@ -170,7 +198,16 @@ export default {
       return Object.values(this.formValidateResult).some(t => t === false);
     },
     transferFee() {
-      return this.fee.internal;
+      if (!this.fee.external) {
+        return 0;
+      }
+
+      if (!this.transferForm.bank_id) {
+        return 0;
+      }
+
+      const bank = this.fee.external.find(t => t.bank_id === this.transferForm.bank_id);
+      return bank ? bank.transfer_fee : 0;
     },
     senderAmount() {
       return this.transferForm.amount + (this.transferForm.sender_pay_fee ? this.transferFee : 0);
@@ -188,21 +225,30 @@ export default {
     }
   },
   methods: {
-    async onAccountChange(accountNumber) {
-      const isValid = accountNumber && /^\d{16}$/.test(accountNumber) && accountNumber !== this.currentAccount;
+    async onAccountChange() {
       this.formValidateResult.account_name = false;
+      this.transferForm.account_name = '';
+
+      const accountNumber = this.transferForm.account_number;
+      const bankId = this.transferForm.bank_id;
+
+      if (!accountNumber || !bankId) {
+        return false;
+      }
+
+      const isValid = accountNumber && /^\d+$/.test(accountNumber) &&
+      accountNumber !== this.currentAccount;
 
       if (!isValid) {
-        this.transferForm.account_name = '';
         return false;
       }
 
       this.transferForm.account_name = 'Đang tìm kiếm';
-
       this.accountLoading = true;
+
       const api = new AccountApi();
       api.setToken(this.$store.state.user.token);
-      const res = await api.getUserNameByAccountNumber(accountNumber);
+      const res = await api.getExternalAccount(accountNumber, bankId);
 
       this.accountLoading = false;
 
@@ -215,7 +261,7 @@ export default {
           return;
         }
 
-        this.transferForm.account_name = result.name;
+        this.transferForm.account_name = result;
         this.formValidateResult.account_name = true;
       }
     },
@@ -236,13 +282,14 @@ export default {
         this.loadContactsList();
       }
     },
+
     async loadContactsList() {
       const contact = new ContactApi();
       this.isContactsListLoaded = false;
 
       contact.setToken(this.$store.getters.token);
 
-      const res = await contact.getContact('me', this.contactsListPage, 'internal');
+      const res = await contact.getContact('me', this.contactsListPage, 'external');
 
       if (res.isFailed() || res.status() !== 200) {
         return this.$notify.error('Có lỗi xảy ra khi tải danh sách');
@@ -255,6 +302,14 @@ export default {
       this.contactsListShowing = false;
       this.$emit('input', { ...this.value, account_number: row.account_number, account_name: row.name });
       this.formValidateResult.account_name = true;
+    },
+
+    bankClick(row) {
+      this.$emit('input', { ...this.value, bank_id: row.bank_id, bank_name: row.bank_name });
+      this.formValidateResult.bank_name = true;
+      this.isBanksListShowing = false;
+
+      this.onAccountChange(this.transferForm.account_number);
     }
   }
 };

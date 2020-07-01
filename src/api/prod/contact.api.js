@@ -7,9 +7,13 @@ export default class ContactApi extends BaseApi {
     return this.get();
   }
 
-  createContact({ userId = 'me', form }) {
-    this.setUrl(`/users/${userId}/contacts`);
-    this.setData(form);
+  createNewContact(accountNumber, bankId, name) {
+    this.setUrl('/contacts');
+    this.setData({
+      account_number: accountNumber,
+      bank_id: bankId || 0,
+      name
+    });
 
     return this.post();
   }
@@ -19,5 +23,10 @@ export default class ContactApi extends BaseApi {
     this.setData({});
 
     return this.delete();
+  }
+
+  getContact(id, page = 1, filter = null) {
+    this.setUrl(`/users/${id}/contacts?page=${page}${filter ? `&filter=${filter}` : ''}`);
+    return this.get();
   }
 }
