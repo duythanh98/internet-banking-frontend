@@ -66,14 +66,12 @@
             size="small"
             @click="$router.push({name: 'EditReminder', params: {id: row.id}})"
           />
-          <el-popconfirm
-            title="Bạn có muốn xoá lời nhắc này không?"
-            confirm-button-text="Đồng ý"
-            cancel-button-text="Không"
-            @onConfirm="remove(row.id)"
-          >
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="small" />
-          </el-popconfirm>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="small"
+            @click="onRemoving(row.id)"
+          />
         </template>
       </el-table-column>
     </el-table>
@@ -88,6 +86,39 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+
+    <el-dialog title="Xoá lời nhắc" :visible.sync="isRemovingShowing" width="60%">
+      <el-form
+        ref="removingForm"
+        :model="removingForm"
+        label-width="80px"
+        :rules="removingRules"
+        style="margin-top: 20px"
+        @validate="removingFormValidated"
+        @submit.native.prevent
+      >
+        <el-form-item label-width="0" prop="note">
+          <el-input
+            v-model="removingForm.note"
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 2}"
+          />
+        </el-form-item>
+        <el-row type="flex" justify="center" style="margin-top: 10px;">
+          <el-button
+            type="primary"
+            :disabled="removingFormInvalid || submitting"
+            :loading="submitting"
+            @click="remove"
+          >Xác nhận</el-button>
+          <el-button
+            type="danger"
+            :disabled="submitting"
+            @click="isRemovingShowing = false"
+          >Huỷ bỏ</el-button>
+        </el-row>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -99,9 +130,10 @@ export default {
   directives: { waves, permission },
   data() {
     return {
-      dialogTableVisible: false,
+      isRemovingShowing: false,
       isLoaded: false,
       submitting: false,
+      reminderId: 0,
       pagination: {
         data: [],
         total: 0,
@@ -112,14 +144,31 @@ export default {
       filter: {
         keyword: ''
       },
+      removingForm: {
+        note: ''
+      },
       loading: false,
       filterRules: {
         keyword: [
           { min: 1, max: 32, message: 'Từ khoá từ 1 tới 32 kí tự', trigger: 'change' }
         ]
       },
+      removingRules: {
+        note: [
+          { required: true, message: 'Lí do xoá không được để trống', trigger: 'change' },
+          { min: 1, max: 150, message: 'Từ khoá từ 1 tới 150 kí tự', trigger: 'change' }
+        ]
+      },
+      removingFormValidateResult: {
+        note: false
+      },
       sorts: []
     };
+  },
+  computed: {
+    removingFormInvalid() {
+      return Object.values(this.removingFormValidateResult).some(t => t === false);
+    }
   },
   created() {
     this.reload();
@@ -141,16 +190,25 @@ export default {
         this.loading = false;
       }
     },
-    async remove(id) {
+    async remove() {
+      this.submitting = true;
       try {
-        await this.$store.dispatch('user/deleteReminder', { userId: 'me', reminderId: id });
+        await this.$store.dispatch('user/deleteReminder', { userId: 'me', reminderId: this.reminderId });
 
         this.$notify.success({ message: 'Xoá thành công', position: 'bottom-right' });
         this.reload();
         this.$emit('reload-completed');
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      } finally {
+        this.submitting = false;
+        this.isRemovingShowing = false;
+        this.reminderId = 0;
       }
+    },
+    onRemoving(id) {
+      this.reminderId = id;
+      this.isRemovingShowing = true;
     },
     load() {
       if (!this.isLoaded) {
@@ -182,6 +240,9 @@ export default {
       }
 
       this.reload();
+    },
+    removingFormValidated(name, valid) {
+      this.removingFormValidateResult[name] = valid !== false;
     }
   }
 };
