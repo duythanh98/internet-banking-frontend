@@ -3,7 +3,7 @@ import router, { resetRouter } from '@/router';
 import LoginApi from '@/api/prod/login.api';
 import UserApi from '@/api/prod/user.api';
 import ReminderApi from '@/api/prod/reminder.api';
-import AccountApi from '@/api/prod/account.api';
+// import AccountApi from '@/api/prod/account.api';
 
 const state = {
   token: getToken(),
@@ -253,11 +253,11 @@ const actions = {
     return result;
   },
 
-  async getAccounts({ commit, state }) {
-    const api = new AccountApi();
+  async getMyAccount({ commit, state }) {
+    const api = new UserApi();
     api.setToken(state.token);
 
-    const res = await api.getAccounts();
+    const res = await api.getMyAccount();
     console.log(res);
     if (res.isFailed()) {
       if (res.status() === 401) {
@@ -270,6 +270,26 @@ const actions = {
     const result = res.result();
 
     return result;
+  },
+
+  async getAccounts({ commit, state }) {
+    // const api = new AccountApi();
+    // api.setToken(state.token);
+
+    // const res = await api.getAccounts();
+    // console.log(res);
+    // if (res.isFailed()) {
+    //   if (res.status() === 401) {
+    //     throw new Error('Phiên đăng nhập hết hạn');
+    //   }
+
+    //   throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    // }
+
+    // const result = res.result();
+
+    // return result;
+    return [];
   }
 };
 

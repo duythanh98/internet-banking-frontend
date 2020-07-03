@@ -7,7 +7,7 @@
             <el-input
               v-model="filter.keyword"
               class="filter-item"
-              :placeholder="$t('Tìm kiếm')"
+              placeholder="Tìm kiếm"
               style="width: 200px;"
               @keyup.enter.native="handleFilter"
             />
@@ -18,29 +18,37 @@
               type="primary"
               icon="el-icon-search"
               @click="handleFilter"
-            >{{ $t('Tìm kiếm') }}</el-button>
+            >Tìm kiếm</el-button>
           </el-form-item>
         </el-form>
       </el-col>
       <el-col style="text-align: right">
-        <el-button
-          v-waves
-          class="filter-item"
-          style="margin-left: 10px;"
-          type="success"
-          icon="el-icon-circle-plus"
-          @click="$router.push({name: 'AddCountry'})"
-        >{{ $t('Thêm mới') }}</el-button>
         <el-button
           class="filter-item"
           style="margin-left: 10px;"
           type="primary"
           icon="el-icon-refresh"
           @click="reload"
-        >{{ $t('Tải lại') }}</el-button>
+        >Tải lại</el-button>
       </el-col>
     </el-row>
 
+    <h3 style="color: #606266;">Tài khoản thanh toán</h3>
+    <el-table
+      v-loading="loading"
+      :data="account"
+      border
+      fit
+      sortable="custom"
+      highlight-current-row
+      style="width: 100%;"
+      @sort-change="handleSortChange"
+    >
+      <el-table-column label="Số tài khoản" prop="account_number" align="left" header-align="center" />
+      <el-table-column label="Số dư hiện tại" prop="balance" align="right" header-align="center" />
+    </el-table>
+
+    <h3 style="margin-top: 30px; color: #606266;">Tài khoản tiết kiệm</h3>
     <el-table
       v-loading="loading"
       :data="pagination.data"
@@ -51,8 +59,8 @@
       style="width: 100%;"
       @sort-change="handleSortChange"
     >
-      <el-table-column label="Số tài khoản" prop="account" sortable align="center" />
-      <el-table-column label="Số dư hiện tại" prop="deposit" sortable />
+      <el-table-column label="Số tài khoản" prop="account_number" sortable align="left" header-align="center" />
+      <el-table-column label="Số dư hiện tại" prop="balance" sortable align="right" header-align="center" />
     </el-table>
 
     <el-pagination
@@ -77,6 +85,7 @@ export default {
   data() {
     return {
       isLoaded: false,
+      account: [],
       pagination: {
         data: [],
         total: 0,
@@ -90,25 +99,39 @@ export default {
       loading: false,
       filterRules: {
         keyword: [
-          { min: 1, max: 32, message: this.$t('Từ khoá từ {min} tới {max} kí tự', { min: 1, max: 32 }), trigger: 'change' }
+          {
+            min: 1,
+            max: 32,
+            message: 'Từ khoá từ 1 tới 32 kí tự',
+            trigger: 'change'
+          }
         ]
       },
       sorts: []
     };
   },
+  created() {
+    this.reload();
+  },
   methods: {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch('user/getAccounts');
+        const promises = [
+          this.$store.dispatch('user/getMyAccount'),
+          this.$store.dispatch('user/getAccounts')
+        ];
+        const results = await Promise.all(promises);
 
-        this.pagination = result;
-        this.loading = false;
+        this.account = [results[0]];
+        this.pagination = results[1];
         this.isLoaded = true;
 
         this.$emit('reload-completed');
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error(
+          err instanceof Error ? err.message : 'Có lỗi xảy ra'
+        );
       } finally {
         this.loading = false;
       }
@@ -137,7 +160,9 @@ export default {
     },
     handleSortChange(column) {
       if (column.order) {
-        this.sorts = [[column.prop, column.order.startsWith('asc') ? 'asc' : 'desc']];
+        this.sorts = [
+          [column.prop, column.order.startsWith('asc') ? 'asc' : 'desc']
+        ];
       } else {
         this.sorts = [];
       }

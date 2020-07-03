@@ -131,13 +131,24 @@ export const constantRoutes = [
 export const asyncRoutes = [
   {
     path: '/accounts',
-    components: () => import('@/views/accounts/page'),
-    name: 'Account',
+    component: Layout,
     meta: {
       title: 'Tài khoản',
       icon: 'user',
-      roles: ['admin', 'employee']
-    }
+      roles: ['customer']
+    },
+    children: [
+      {
+        path: '',
+        name: 'Account',
+        component: () => import('@/views/accounts/page'),
+        meta: {
+          title: 'Tài khoản',
+          icon: 'user'
+        }
+      }
+    ]
+
   },
   {
     path: '/transfer',
