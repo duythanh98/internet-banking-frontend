@@ -51,7 +51,7 @@
       style="width: 100%;"
       @sort-change="handleSortChange"
     >
-      <el-table-column label="ID" prop="id" sortable align="center" width="145" />
+      <el-table-column label="ID" prop="id" sortable align="center" width="70" />
       <el-table-column label="Người nhắc nợ" prop="from_name" sortable />
       <el-table-column label="Người nợ" prop="to_name" sortable />
       <el-table-column label="Số tiền" prop="amount" sortable />

@@ -6,7 +6,7 @@
           <el-col :md="12" :xs="24">
             <el-form-item prop="account_number" label="Số tài khoản người nợ">
               <el-input v-model.trim="form.account_number" maxlength="16" @input="onAccountChange">
-                <el-button slot="append" icon="el-icon-notebook-1" />
+                <el-button slot="append" icon="el-icon-notebook-1" @click="showContactsList" />
               </el-input>
             </el-form-item>
           </el-col>
@@ -35,11 +35,28 @@
         </div>
       </el-form>
     </div>
+    <el-dialog title="Danh sách tài khoản" :visible.sync="contactsListShowing" width="60%">
+      <div v-loading="!isContactsListLoaded">
+        <el-table :data="contactLists.data" @row-click="contactListClick">
+          <el-table-column property="name" label="Tên tài khoản" />
+          <el-table-column property="account_number" label="Số tài khoản" />
+          <el-table-column property="bank_name" label="Ngân hàng" />
+        </el-table>
+        <el-pagination
+          style="margin-top: 10px"
+          :page-size="contactLists.per_page || 10"
+          :pager-count="11"
+          layout="prev, pager, next"
+          :total="contactLists.total || 0"
+        />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import AccountApi from '@/api/prod/account.api';
+import ContactApi from '@/api/prod/contact.api';
 import permission from '@/directive/permission';
 
 export default {
@@ -83,6 +100,10 @@ export default {
       isLoaded: false,
       submitting: false,
       accountLoading: false,
+      contactLists: {},
+      contactsListShowing: false,
+      isContactsListLoaded: false,
+      contactsListPage: 1,
       formValidateResult: {
         account_number: false,
         account_name: false,
@@ -175,6 +196,33 @@ export default {
     },
     validated(name, valid) {
       this.formValidateResult[name] = valid !== false;
+    },
+    showContactsList() {
+      this.contactsListShowing = true;
+
+      if (!this.isContactsListLoaded) {
+        this.loadContactsList();
+      }
+    },
+    async loadContactsList() {
+      const contact = new ContactApi();
+      this.isContactsListLoaded = false;
+
+      contact.setToken(this.$store.getters.token);
+
+      const res = await contact.getContact('me', this.contactsListPage, 'internal');
+
+      if (res.isFailed() || res.status() !== 200) {
+        return this.$notify.error('Có lỗi xảy ra khi tải danh sách');
+      }
+
+      this.contactLists = res.result();
+      this.isContactsListLoaded = true;
+    },
+    contactListClick(row) {
+      this.contactsListShowing = false;
+      this.$emit('input', { ...this.value, account_number: row.account_number, account_name: row.name });
+      this.formValidateResult.account_name = true;
     }
   }
 };
