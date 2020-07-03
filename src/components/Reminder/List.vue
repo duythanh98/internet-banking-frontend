@@ -74,6 +74,7 @@
             @click="$router.push({name: 'EditReminder', params: {id: row.id}})"
           />
           <el-button
+            v-if="row.status === 'created'"
             type="danger"
             icon="el-icon-delete"
             size="small"
@@ -180,12 +181,12 @@ export default {
       status: {
         paid: { color: '#28a745', text: 'Đã trả' },
         created: { color: '#007bff', text: 'Đã tạo' },
-        cancel: { color: '#dc3545', text: 'Đã xoá' }
+        cancel: { color: '#dc3545', text: 'Đã huỷ' }
       },
       statusFilter: [
         { text: 'Đã tạo', value: 'created' },
         { text: 'Đã trả', value: 'paid' },
-        { text: 'Đã xoá', value: 'cancel' }
+        { text: 'Đã huỷ', value: 'cancel' }
       ],
       sorts: []
     };
@@ -216,7 +217,8 @@ export default {
     async remove() {
       this.submitting = true;
       try {
-        await this.$store.dispatch('user/deleteReminder', { userId: 'me', reminderId: this.reminderId });
+        await this.$store.dispatch('user/deleteReminder',
+          { reminderId: this.reminderId, note: this.removingForm.note });
 
         this.$notify.success({ message: 'Xoá thành công', position: 'bottom-right' });
         this.reload();

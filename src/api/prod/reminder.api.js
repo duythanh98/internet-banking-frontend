@@ -14,9 +14,9 @@ export default class ReminderApi extends BaseApi {
     return this.post();
   }
 
-  deleteReminder({ userId = 'me', reminderId }) {
-    this.setUrl(`/users/${userId}/reminders/${reminderId}`);
-    this.setData({});
+  deleteReminder({ reminderId, note = '' }) {
+    this.setUrl(`/reminders/${reminderId}`);
+    this.setData({ note });
 
     return this.delete();
   }
