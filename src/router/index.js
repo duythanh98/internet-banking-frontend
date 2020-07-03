@@ -175,7 +175,7 @@ export const asyncRoutes = [
     component: Layout,
     meta: {
       title: 'Nhắc nợ',
-      icon: 'user',
+      icon: 'payment',
       roles: ['customer']
     },
     children: [

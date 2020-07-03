@@ -7,8 +7,8 @@ export default class ReminderApi extends BaseApi {
     return this.get();
   }
 
-  createReminder({ userId = 'me', form }) {
-    this.setUrl(`/users/${userId}/reminders`);
+  createReminder(form) {
+    this.setUrl(`/reminders`);
     this.setData(form);
 
     return this.post();

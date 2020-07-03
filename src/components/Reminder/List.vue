@@ -68,11 +68,10 @@
       <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
+            v-if="!reminding && row.status === 'created'"
             type="primary"
-            icon="el-icon-edit"
             size="small"
-            @click="$router.push({name: 'EditReminder', params: {id: row.id}})"
-          />
+          ><svg-icon icon-class="payment" /></el-button>
           <el-button
             v-if="row.status === 'created'"
             type="danger"
@@ -101,7 +100,6 @@
         :model="removingForm"
         label-width="80px"
         :rules="removingRules"
-        style="margin-top: 20px"
         @validate="removingFormValidated"
         @submit.native.prevent
       >
@@ -111,6 +109,7 @@
             type="textarea"
             rows="3"
             maxlength="150"
+            placeholder="Nhập lí do"
           />
         </el-form-item>
         <el-row type="flex" justify="center" style="margin-top: 10px;">

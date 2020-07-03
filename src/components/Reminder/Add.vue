@@ -31,7 +31,7 @@
           </el-col>
         </el-row>
         <div style="text-align: center; margin-top: 20px">
-          <el-button :disabled="formInvalid" :loading="submitting" type="primary">Tạo lời nhắc</el-button>
+          <el-button :disabled="formInvalid" :loading="submitting" type="primary" @click="save">Tạo lời nhắc</el-button>
         </div>
       </el-form>
     </div>
@@ -86,6 +86,10 @@ export default {
         return cb(new Error('Không thể nhập tài khoản nguồn'));
       }
 
+      if (this.form.account_number === this.$store.getters.account) {
+        return cb(new Error('Không thể gán nợ tài khoản của chính bạn'));
+      }
+
       return cb();
     };
 
@@ -94,8 +98,7 @@ export default {
         account_number: '',
         account_name: '',
         amount: '',
-        note: '',
-        status: ''
+        note: ''
       },
       isLoaded: false,
       submitting: false,
@@ -108,8 +111,7 @@ export default {
         account_number: false,
         account_name: false,
         amount: false,
-        note: false,
-        status: false
+        note: false
       },
       rules: {
         account_number: [
@@ -149,11 +151,13 @@ export default {
       this.submitting = true;
 
       try {
-        await this.$store.dispatch('user/createReminder', this.form);
+        // eslint-disable-next-line no-unused-vars
+        const { account_name, ...submit } = this.form;
+        await this.$store.dispatch('user/createReminder', submit);
         this.reset('form');
 
         this.$notify.success({ message: 'Thêm mới thành công', position: 'bottom-right' });
-        this.$router.push({ name: 'ListCountry' });
+        this.$router.push({ name: 'ReminderList', params: { targetedTab: 'reminder' }});
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
       } finally {

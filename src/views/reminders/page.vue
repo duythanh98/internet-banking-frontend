@@ -26,6 +26,9 @@ export default {
     };
   },
   mounted() {
+    if (this.$route.params.targetedTab) {
+      this.tabs = this.$route.params.targetedTab;
+    }
     this.$refs.debt.load();
     this.$refs.reminder.load();
   },
