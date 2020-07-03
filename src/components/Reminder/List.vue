@@ -24,6 +24,7 @@
       </el-col>
       <el-col style="text-align: right">
         <el-button
+          v-if="reminding"
           v-waves
           class="filter-item"
           style="margin-left: 10px;"
@@ -50,14 +51,20 @@
       highlight-current-row
       style="width: 100%;"
       @sort-change="handleSortChange"
+      @filter-change="handleFilterChange"
     >
-      <el-table-column label="ID" prop="id" sortable align="center" width="70" />
-      <el-table-column label="Người nhắc nợ" prop="from_name" sortable />
-      <el-table-column label="Người nợ" prop="to_name" sortable />
-      <el-table-column label="Số tiền" prop="amount" sortable />
-      <el-table-column label="Lời nhắc" prop="note" sortable />
-      <el-table-column label="Trạng thái" prop="status" sortable />
-      <el-table-column label="Ngày tạo" prop="created_at" sortable />
+      <el-table-column label="ID" prop="id" sortable align="right" header-align="center" width="70" />
+      <el-table-column v-if="reminding" label="Người nợ" prop="receiver.user.name" align="left" header-align="center" sortable />
+      <el-table-column v-else label="Người nhắc nợ" prop="sender.name" align="left" header-align="center" sortable />
+      <el-table-column v-if="reminding" label="Số tài khoản" prop="receiver.account_number" align="right" header-align="center" sortable />
+      <el-table-column label="Số tiền" prop="amount" align="right" header-align="center" sortable />
+      <el-table-column label="Lời nhắc" prop="note" align="left" header-align="center" sortable />
+      <el-table-column label="Trạng thái" prop="status" align="center" :filters="statusFilter" filter-placement="bottom-end" sortable>
+        <template slot-scope="{row}">
+          <div class="status" :style="{background: status[row.status].color}">{{ status[row.status].text }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="Ngày tạo" prop="created_at" align="center" sortable />
       <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
@@ -101,7 +108,8 @@
           <el-input
             v-model="removingForm.note"
             type="textarea"
-            :autosize="{ minRows: 2, maxRows: 2}"
+            rows="3"
+            maxlength="150"
           />
         </el-form-item>
         <el-row type="flex" justify="center" style="margin-top: 10px;">
@@ -128,6 +136,12 @@ import permission from '@/directive/permission';
 
 export default {
   directives: { waves, permission },
+  props: {
+    reminding: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       isRemovingShowing: false,
@@ -142,7 +156,8 @@ export default {
         last_page: 0
       },
       filter: {
-        keyword: ''
+        keyword: '',
+        status: []
       },
       removingForm: {
         note: ''
@@ -162,6 +177,16 @@ export default {
       removingFormValidateResult: {
         note: false
       },
+      status: {
+        paid: { color: '#28a745', text: 'Đã trả' },
+        created: { color: '#007bff', text: 'Đã tạo' },
+        cancel: { color: '#dc3545', text: 'Đã xoá' }
+      },
+      statusFilter: [
+        { text: 'Đã tạo', value: 'created' },
+        { text: 'Đã trả', value: 'paid' },
+        { text: 'Đã xoá', value: 'cancel' }
+      ],
       sorts: []
     };
   },
@@ -170,14 +195,12 @@ export default {
       return Object.values(this.removingFormValidateResult).some(t => t === false);
     }
   },
-  created() {
-    this.reload();
-  },
   methods: {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch('user/getReminders', { id: 'me' });
+        const result = await this.$store.dispatch(`user/getReminders`,
+          { id: 'me', type: this.reminding ? 'reminders' : 'debts', status: this.filter.status });
 
         this.pagination = result;
         this.loading = false;
@@ -243,7 +266,23 @@ export default {
     },
     removingFormValidated(name, valid) {
       this.removingFormValidateResult[name] = valid !== false;
+    },
+    handleFilterChange(filters) {
+      this.filter.status = filters.status;
+      this.reload();
     }
   }
 };
 </script>
+
+<style scoped>
+.status {
+  color: #fff;
+  border-radius: 1.5vmin;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.3vmin 0.6vmin;
+  font-size: 2.2vmin;
+  margin: auto auto;
+}
+</style>

@@ -200,7 +200,7 @@ const actions = {
     const api = new ReminderApi();
     api.setToken(state.token);
 
-    const res = await api.getReminders(form.id);
+    const res = await api.getReminders(form.id, form.type, form.status);
     console.log(res);
     if (res.isFailed()) {
       if (res.status() === 401) {

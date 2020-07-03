@@ -1,8 +1,8 @@
 import BaseApi from '../base';
 
 export default class ReminderApi extends BaseApi {
-  getReminders(id = 'me') {
-    this.setUrl(`/users/${id}/reminders`);
+  getReminders(id = 'me', type = 'reminders', status = []) {
+    this.setUrl(`/users/${id}/${type}`);
 
     return this.get();
   }
