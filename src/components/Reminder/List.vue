@@ -64,7 +64,11 @@
           <div class="status" :style="{background: status[row.status].color}">{{ status[row.status].text }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="Ngày tạo" prop="created_at" align="center" sortable />
+      <el-table-column label="Ngày tạo" prop="created_at" align="center" sortable>
+        <template slot-scope="{row}">
+          <div>{{ formatDate(row.created_at) }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
@@ -133,6 +137,7 @@
 <script>
 import waves from '@/directive/waves';
 import permission from '@/directive/permission';
+import moment from 'moment';
 
 export default {
   directives: { waves, permission },
@@ -271,6 +276,9 @@ export default {
     handleFilterChange(filters) {
       this.filter.status = filters.status;
       this.reload();
+    },
+    formatDate(time) {
+      return moment(time).format('DD/MM/YYYY');
     }
   }
 };
