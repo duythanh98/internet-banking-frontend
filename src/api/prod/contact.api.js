@@ -1,8 +1,8 @@
 import BaseApi from '../base';
 
 export default class ContactApi extends BaseApi {
-  getContacts() {
-    this.setUrl(`/users/contacts`);
+  getContacts(userId = 'me') {
+    this.setUrl(`/users/${userId}/contacts`);
 
     return this.get();
   }
@@ -18,8 +18,8 @@ export default class ContactApi extends BaseApi {
     return this.post();
   }
 
-  deleteContact({ userId = 'me', contactId }) {
-    this.setUrl(`/users/${userId}/contacts/${contactId}`);
+  deleteContact(contactId = 0) {
+    this.setUrl(`/contacts/${contactId}`);
     this.setData({});
 
     return this.delete();

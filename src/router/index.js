@@ -198,6 +198,33 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/contacts',
+    component: Layout,
+    meta: {
+      title: 'Liên hệ',
+      icon: 'payment',
+      roles: ['customer']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/contacts/page'),
+        name: 'ContactList',
+        meta: {
+          title: 'Danh sách liên hệ'
+        }
+      },
+      {
+        path: 'new',
+        component: () => import('@/views/contacts/add'),
+        name: 'AddContact',
+        meta: {
+          title: 'Thêm liên hệ'
+        }
+      }
+    ]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',

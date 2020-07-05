@@ -3,6 +3,7 @@ import router, { resetRouter } from '@/router';
 import LoginApi from '@/api/prod/login.api';
 import UserApi from '@/api/prod/user.api';
 import ReminderApi from '@/api/prod/reminder.api';
+import ContactApi from '@/api/prod/contact.api';
 // import AccountApi from '@/api/prod/account.api';
 
 const state = {
@@ -201,7 +202,7 @@ const actions = {
     api.setToken(state.token);
 
     const res = await api.getReminders(form.id, form.type, form.status);
-    console.log(res);
+
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
@@ -219,8 +220,8 @@ const actions = {
     const api = new ReminderApi();
     api.setToken(state.token);
 
-    const res = await api.createReminder(form);
-    console.log(res);
+    const res = await api.createReminder(form.account_number, form.amount, form.note);
+
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
@@ -238,8 +239,8 @@ const actions = {
     const api = new ReminderApi();
     api.setToken(state.token);
 
-    const res = await api.deleteReminder(form);
-    console.log(res);
+    const res = await api.deleteReminder(form.reminderId, form.note);
+
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
@@ -258,7 +259,7 @@ const actions = {
     api.setToken(state.token);
 
     const res = await api.getMyAccount();
-    console.log(res);
+
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
@@ -290,6 +291,63 @@ const actions = {
 
     // return result;
     return [];
+  },
+
+  async getContacts({ commit, state }, form) {
+    const api = new ContactApi();
+    api.setToken(state.token);
+
+    const res = await api.getContacts(form.id);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async createContact({ commit, state }, form) {
+    const api = new ContactApi();
+    api.setToken(state.token);
+
+    const res = await api.createNewContact(form.account_number, form.bank_id, form.name);
+    console.log(res);
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async deleteContact({ commit, state }, form) {
+    const api = new ContactApi();
+    api.setToken(state.token);
+
+    const res = await api.deleteContact(form.contactId);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
   }
 };
 

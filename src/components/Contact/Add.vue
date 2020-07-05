@@ -25,7 +25,12 @@
           <el-col :md="12" :xs="24" />
         </el-row>
         <div style="text-align: center; margin-top: 20px">
-          <el-button :disabled="formInvalid" :loading="submitting" type="success">Thêm mới</el-button>
+          <el-button
+            :disabled="formInvalid || submitting"
+            :loading="submitting"
+            type="success"
+            @click="save"
+          >Thêm mới</el-button>
         </div>
       </el-form>
     </div>
@@ -55,6 +60,7 @@ export default {
     return {
       form: {
         account_number: '',
+        bankId: 0,
         name: ''
       },
       isLoaded: false,
@@ -70,6 +76,19 @@ export default {
             required: true,
             trigger: 'change',
             validator: accountNumberValidator
+          }
+        ],
+        name: [
+          {
+            required: true,
+            message: 'Tên gợi nhớ Không được bỏ trống',
+            trigger: 'change'
+          },
+          {
+            min: 1,
+            max: 150,
+            message: 'Tên gợi nhớ từ 1 tới 150 kí tự',
+            trigger: 'change'
           }
         ]
       }
@@ -88,11 +107,13 @@ export default {
       this.submitting = true;
 
       try {
-        await this.$store.dispatch('user/createContact', this.form);
+        // eslint-disable-next-line no-unused-vars
+        const { account_name, ...submit } = this.form;
+        await this.$store.dispatch('user/createContact', submit);
         this.reset('form');
 
-        this.$notify.success({ message: this.$t('Thêm mới thành công'), position: 'bottom-right' });
-        this.$router.push({ name: 'ListCountry' });
+        this.$notify.success({ message: 'Thêm mới thành công', position: 'bottom-right' });
+        this.$router.push({ name: 'ContactList' });
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
       } finally {
