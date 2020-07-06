@@ -2,6 +2,8 @@ import { getToken, setToken, removeToken } from '@/utils/auth';
 import router, { resetRouter } from '@/router';
 import LoginApi from '@/api/prod/login.api';
 import UserApi from '@/api/prod/user.api';
+import ReminderApi from '@/api/prod/reminder.api';
+import AccountApi from '@/api/prod/account.api';
 
 const state = {
   token: getToken(),
@@ -63,6 +65,7 @@ const actions = {
     api.setToken(state.token);
 
     const res = await api.getUser('me');
+    console.log(res);
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
@@ -190,6 +193,82 @@ const actions = {
 
       resolve();
     });
+  },
+
+  async getReminders({ commit, state }, form) {
+    const api = new ReminderApi();
+    api.setToken(state.token);
+
+    const res = await api.getReminders(form.id);
+    console.log(res);
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async createReminder({ commit, state }, form) {
+    const api = new ReminderApi();
+    api.setToken(state.token);
+
+    const res = await api.createReminder(form);
+    console.log(res);
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async deleteReminder({ commit, state }, form) {
+    const api = new ReminderApi();
+    api.setToken(state.token);
+
+    const res = await api.deleteReminder(form);
+    console.log(res);
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async getAccounts({ commit, state }) {
+    const api = new AccountApi();
+    api.setToken(state.token);
+
+    const res = await api.getAccounts();
+    console.log(res);
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
   }
 };
 

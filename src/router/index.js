@@ -130,6 +130,16 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    path: '/accounts',
+    components: () => import('@/views/accounts/page'),
+    name: 'Account',
+    meta: {
+      title: 'Tài khoản',
+      icon: 'user',
+      roles: ['admin', 'employee']
+    }
+  },
+  {
     path: '/transfer',
     component: Layout,
     meta: {
@@ -145,6 +155,33 @@ export const asyncRoutes = [
         meta: {
           title: 'Chuyển khoản',
           icon: 'lock'
+        }
+      }
+    ]
+  },
+  {
+    path: '/reminders',
+    component: Layout,
+    meta: {
+      title: 'Nhắc nợ',
+      icon: 'user',
+      roles: ['customer']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/reminders/page'),
+        name: 'ReminderList',
+        meta: {
+          title: 'Danh sách nhắc nợ'
+        }
+      },
+      {
+        path: 'new',
+        component: () => import('@/views/reminders/add'),
+        name: 'AddReminder',
+        meta: {
+          title: 'Thêm nhắc nợ'
         }
       }
     ]

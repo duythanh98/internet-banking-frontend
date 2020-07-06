@@ -224,4 +224,8 @@ export default class BaseApi extends EventEmitter {
     get() {
       return this.send('get');
     }
+
+    delete() {
+      return this.send('delete');
+    }
 }

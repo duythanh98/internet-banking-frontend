@@ -1,6 +1,12 @@
 import BaseApi from '../base';
 
 export default class ContactApi extends BaseApi {
+  getContacts() {
+    this.setUrl(`/users/contacts`);
+
+    return this.get();
+  }
+
   createNewContact(accountNumber, bankId, name) {
     this.setUrl('/contacts');
     this.setData({
@@ -10,6 +16,13 @@ export default class ContactApi extends BaseApi {
     });
 
     return this.post();
+  }
+
+  deleteContact({ userId = 'me', contactId }) {
+    this.setUrl(`/users/${userId}/contacts/${contactId}`);
+    this.setData({});
+
+    return this.delete();
   }
 
   getContact(id, page = 1, filter = null) {
