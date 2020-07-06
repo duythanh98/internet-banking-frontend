@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     notificationId() {
-      return this.$store.getters.notification_id;
+      return this.$store.getters.notificationId;
     }
   },
   watch: {
