@@ -9,7 +9,7 @@ export default class Response {
     this.error = error;
 
     Object.defineProperty(this, 'isNetworkError', {
-      value: error && error.message === 'Network Error',
+      value: !!(error && error.message === 'Network Error'),
       writable: false,
       enumerable: true
     });
@@ -19,7 +19,7 @@ export default class Response {
      * @returns {boolean}
      */
   isFailed() {
-    return typeof this.error !== 'undefined';
+    return !!this.error;
   }
 
   /**

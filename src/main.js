@@ -21,6 +21,7 @@ import './utils/error-log'; // error log
 
 import * as filters from './filters'; // global filters
 
+import './plugins/cancel-action';
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

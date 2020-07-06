@@ -1,8 +1,9 @@
 import { EventEmitter } from 'events';
 import axios from 'axios';
 import Response from './response';
+import { CancelAction } from '@/plugins/cancel-action';
 
-class BaseApi extends EventEmitter {
+export default class BaseApi extends EventEmitter {
     static defaultEvent = new EventEmitter();
 
     constructor() {
@@ -22,6 +23,8 @@ class BaseApi extends EventEmitter {
       this.form = null;
 
       this.token = null;
+
+      this.cancel = null;
     }
 
     /**
@@ -154,55 +157,64 @@ class BaseApi extends EventEmitter {
      * @param {string} method
      * @returns {Promise<Response>}
      */
-    async send(method) {
+    send(method) {
       if (this.token && typeof this.token === 'string') {
         this.addHeader('Authorization', `Bearer ${this.token}`);
       }
 
       method = method || 'get';
 
-      try {
-        this.constructor.defaultEvent.emit('beforesend', this);
-        this.emit('beforesend', this);
+      this.constructor.defaultEvent.emit('beforesend', this);
+      this.emit('beforesend', this);
 
-        const data = this.form ? this.convertDataForm(this.data) : this.data;
+      const data = this.form ? this.convertDataForm(this.data) : this.data;
 
-        const res = await axios({
-          method: method,
-          baseURL: this.baseUrl,
-          headers: this.headers,
-          data,
-          url: this.url
+      return axios({
+        method: method,
+        baseURL: this.baseUrl,
+        headers: this.headers,
+        data,
+        url: this.url,
+        cancelToken: new axios.CancelToken((c) => { this.cancelToken = c; })
+      })
+        .then(res => new Response(res, null), (err) => {
+          if (this.isCancel(err)) {
+            throw err;
+          }
+
+          const response = new Response(err.response, err);
+
+          if (err && err.response) {
+            this.constructor.defaultEvent.emit('requesterror', this, response);
+            this.emit('requesterror', this, response);
+            console.error('Base Request', err);
+            return response;
+          }
+
+          if (this.listenerCount('othererror')) {
+            this.emit('othererror', this, response);
+            return response;
+          }
+
+          if (this.constructor.defaultEvent.listenerCount('othererror')) {
+            this.constructor.defaultEvent.emit('othererror', this, response);
+            return response;
+          }
         });
+    }
 
-        const response = new Response(res);
-
-        this.constructor.defaultEvent.emit('sent', this, response);
-        this.emit('sent', this, response);
-
-        return response;
-      } catch (err) {
-        const response = new Response(err.response, err);
-
-        if (err && err.response) {
-          this.constructor.defaultEvent.emit('requesterror', this, response);
-          this.emit('requesterror', this, response);
-          console.error('Base Request', err);
-          return response;
-        }
-
-        if (this.listenerCount('othererror')) {
-          this.emit('othererror', this, response);
-          return response;
-        }
-
-        if (this.constructor.defaultEvent.listenerCount('othererror')) {
-          this.constructor.defaultEvent.emit('othererror', this, response);
-          return response;
-        }
-
-        // throw err;
+    cancelRequest(message) {
+      if (this.cancelToken) {
+        this.cancelToken(message);
       }
+    }
+
+    isCancel(err) {
+      return err instanceof CancelAction || axios.isCancel(err);
+    }
+
+    isRequestCancel(err) {
+      return axios.isCancel(err);
     }
 
     post() {
@@ -213,5 +225,3 @@ class BaseApi extends EventEmitter {
       return this.send('get');
     }
 }
-
-export default BaseApi;
