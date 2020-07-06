@@ -49,7 +49,6 @@ const actions = {
       if (res.status() === 422) {
         throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
       }
-
       throw new Error('Có lỗi xảy ra, hãy thử lại sau');
     }
 

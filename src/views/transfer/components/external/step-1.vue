@@ -3,7 +3,7 @@
     <el-row :gutter="10">
       <el-col :md="8" :xs="24">
         <el-form-item prop="account_number" label="Số tài khoản người nhận">
-          <el-input v-model.trim="transferForm.account_number" maxlength="16" @change="onAccountChange">
+          <el-input v-model.trim="transferForm.account_number" @change="onAccountChange">
             <el-button slot="append" icon="el-icon-notebook-1" @click="showContactsList" />
           </el-input>
         </el-form-item>
@@ -11,7 +11,7 @@
       <el-col :md="8" :xs="24">
         <el-form-item prop="bank_name" label="Ngân hàng">
           <el-input v-model="transferForm.bank_name" readonly="readonly">
-            <el-button slot="append" icon="el-icon-notebook-1" @click="isBanksListShowing = true" />
+            <el-button slot="append" icon="el-icon-notebook-1" @click="isBanksListShowing = true" @change="onAccountChange" />
           </el-input>
         </el-form-item>
       </el-col>
@@ -222,10 +222,13 @@ export default {
   watch: {
     'value.sender_pay_fee'() {
       this.$refs.transferForm.validateField('amount', () => void 0);
+    },
+    'value.bank_name'() {
+      this.onAccountChange();
     }
   },
   methods: {
-    async onAccountChange() {
+    onAccountChange() {
       this.formValidateResult.account_name = false;
       this.transferForm.account_name = '';
 
@@ -243,27 +246,39 @@ export default {
         return false;
       }
 
+      this.$cancelAction('find_contact');
+
       this.transferForm.account_name = 'Đang tìm kiếm';
       this.accountLoading = true;
 
       const api = new AccountApi();
       api.setToken(this.$store.state.user.token);
-      const res = await api.getExternalAccount(accountNumber, bankId);
 
-      this.accountLoading = false;
+      return this.$callAction('find_contact',
+        () => api.getExternalAccount(accountNumber, bankId),
+        () => api.cancelRequest())
+        .then(res => {
+          this.accountLoading = false;
 
-      if (!res.isFailed()) {
-        const result = res.result();
+          if (!res.isFailed()) {
+            const result = res.result();
 
-        if (!result) {
-          this.validForm = false;
-          this.transferForm.account_name = 'Không tìm thấy';
-          return;
-        }
+            if (!result) {
+              this.validForm = false;
+              this.transferForm.account_name = 'Không tìm thấy';
+              return;
+            }
 
-        this.transferForm.account_name = result;
-        this.formValidateResult.account_name = true;
-      }
+            this.transferForm.account_name = result;
+            this.formValidateResult.account_name = true;
+          }
+        })
+        .catch(err => {
+          if (api.isCancel(err)) {
+            return false;
+          }
+          throw err;
+        });
     },
     validated(name, valid) {
       this.formValidateResult[name] = valid !== false;
@@ -300,7 +315,11 @@ export default {
     },
     contactListClick(row) {
       this.contactsListShowing = false;
-      this.$emit('input', { ...this.value, account_number: row.account_number, account_name: row.name });
+      this.$emit('input', { ...this.value,
+        account_number: row.account_number, account_name: row.name,
+        bank_id: row.bank_id,
+        bank_name: row.bank_name
+      });
       this.formValidateResult.account_name = true;
     },
 
@@ -308,8 +327,6 @@ export default {
       this.$emit('input', { ...this.value, bank_id: row.bank_id, bank_name: row.bank_name });
       this.formValidateResult.bank_name = true;
       this.isBanksListShowing = false;
-
-      this.onAccountChange(this.transferForm.account_number);
     }
   }
 };
