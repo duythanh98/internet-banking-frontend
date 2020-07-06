@@ -12,6 +12,7 @@ const getters = {
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
   account: state => state.user.accountInfo.account_number,
+  userInfo: state => state.user.info,
   notificationId: state => state.user.info ? state.user.info.notification_id : ''
 };
 export default getters;
