@@ -47,7 +47,7 @@ Object.keys(filters).forEach(key => {
 
 Vue.config.productionTip = false;
 
-new Vue({
+window.vue = new Vue({
   el: '#app',
   router,
   store,
