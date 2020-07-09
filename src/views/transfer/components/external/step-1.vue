@@ -3,7 +3,7 @@
     <el-row :gutter="10">
       <el-col :md="8" :xs="24">
         <el-form-item prop="account_number" label="Số tài khoản người nhận">
-          <el-input v-model.trim="transferForm.account_number" @change="onAccountChange">
+          <el-input v-model.trim="transferForm.account_number" @change="onAccountChange" @input="contactClicked = false">
             <el-button slot="append" icon="el-icon-notebook-1" @click="showContactsList" />
           </el-input>
         </el-form-item>
@@ -190,7 +190,8 @@ export default {
         amount: true,
         note: false,
         bank_name: false
-      }
+      },
+      contactClicked: false
     };
   },
   computed: {
@@ -229,6 +230,10 @@ export default {
   },
   methods: {
     onAccountChange() {
+      if (this.contactClicked) {
+        return false;
+      }
+
       this.formValidateResult.account_name = false;
       this.transferForm.account_name = '';
 
@@ -321,12 +326,14 @@ export default {
         bank_name: row.bank_name
       });
       this.formValidateResult.account_name = true;
+      this.contactClicked = true;
     },
 
     bankClick(row) {
       this.$emit('input', { ...this.value, bank_id: row.bank_id, bank_name: row.bank_name });
       this.formValidateResult.bank_name = true;
       this.isBanksListShowing = false;
+      this.contactClicked = false;
     }
   }
 };

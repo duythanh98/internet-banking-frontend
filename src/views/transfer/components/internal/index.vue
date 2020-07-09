@@ -68,8 +68,7 @@ export default {
       };
     },
     newTransaction() {
-      this.resetForm();
-      this.step = 0;
+      this.$emit('reset');
     },
     async createTransfer() {
       const api = new TransferApi();
