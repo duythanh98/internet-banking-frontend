@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path');
 const defaultSettings = require('./src/settings.js');
+const webpack = require('webpack');
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -46,7 +47,10 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
+    plugins: [
+      new webpack.NormalModuleReplacementPlugin(/element-ui[\/\\]lib[\/\\]locale[\/\\]lang[\/\\]zh-CN/, 'element-ui/lib/locale/lang/fr')
+    ]
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload

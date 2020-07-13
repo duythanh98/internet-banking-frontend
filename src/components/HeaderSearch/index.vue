@@ -8,7 +8,7 @@
       filterable
       default-first-option
       remote
-      placeholder="Search"
+      placeholder="Tìm kiếm"
       class="header-search-select"
       @change="change"
     >

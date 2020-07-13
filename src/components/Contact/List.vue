@@ -54,7 +54,7 @@
       <el-table-column label="ID" prop="id" sortable align="right" header-align="center" width="70" />
       <el-table-column label="Số tài khoản" prop="account_number" align="right" header-align="center" sortable />
       <el-table-column label="Tên gợi nhớ" prop="name" align="left" header-align="center" sortable />
-      <el-table-column label="Ngân hàng" prop="bank_id" align="right" header-align="center" sortable />
+      <el-table-column label="Ngân hàng" prop="bank_name" align="center" header-align="center" sortable />
       <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
