@@ -24,7 +24,7 @@
           </el-col>
           <el-col :md="12" :xs="24">
             <el-form-item label="Ngân hàng">
-              <el-select v-model="form.bankId" placeholder="Chọn ngân hàng" style="width: 100%">
+              <el-select v-model="form.bankId" placeholder="Chọn ngân hàng" style="width: 100%" @change="onSelectChange">
                 <el-option
                   v-for="(title, value) in banks"
                   :key="value"
@@ -39,9 +39,9 @@
           <el-button
             :disabled="formInvalid || submitting"
             :loading="submitting"
-            type="success"
+            type="primary"
             @click="save"
-          >Thêm mới</el-button>
+          >Thêm liên hệ</el-button>
         </div>
       </el-form>
     </div>
@@ -154,11 +154,19 @@ export default {
       }
 
       this.form.account_name = 'Đang tìm kiếm';
+      this.formValidateResult.account_name = false;
+      this.formValidateResult = { ...this.formValidateResult };
 
       this.accountLoading = true;
       const api = new AccountApi();
       api.setToken(this.$store.state.user.token);
-      const res = await api.getUserNameByAccountNumber(accountNumber);
+      let res = null;
+
+      if (this.form.bankId === '0') {
+        res = await api.getUserNameByAccountNumber(accountNumber);
+      } else {
+        res = await api.getExternalAccount(accountNumber, this.form.bankId);
+      }
 
       this.accountLoading = false;
 
@@ -174,6 +182,9 @@ export default {
         this.form.account_name = result.name;
         this.formValidateResult.account_name = true;
       }
+    },
+    onSelectChange() {
+      this.onAccountChange(this.form.account_number);
     },
     async getBanks() {
       const api = new TransferApi();

@@ -225,7 +225,8 @@ export default {
     },
     contactListClick(row) {
       this.contactsListShowing = false;
-      this.$emit('input', { ...this.value, account_number: row.account_number, account_name: row.name });
+      this.form.account_number = row.account_number;
+      this.form.account_name = row.name;
       this.formValidateResult.account_name = true;
     }
   }
