@@ -22,7 +22,18 @@
               <el-input v-model.trim="form.name" maxlength="150" />
             </el-form-item>
           </el-col>
-          <el-col :md="12" :xs="24" />
+          <el-col :md="12" :xs="24">
+            <el-form-item label="Ngân hàng">
+              <el-select v-model="form.bankId" placeholder="Chọn ngân hàng" style="width: 100%">
+                <el-option
+                  v-for="(title, value) in banks"
+                  :key="value"
+                  :label="title"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
         <div style="text-align: center; margin-top: 20px">
           <el-button
@@ -40,6 +51,7 @@
 <script>
 import AccountApi from '@/api/prod/account.api';
 import permission from '@/directive/permission';
+import TransferApi from '@/api/prod/transfer.api';
 
 export default {
   directives: { permission },
@@ -60,14 +72,16 @@ export default {
     return {
       form: {
         account_number: '',
-        bankId: 0,
+        bankId: '0',
         name: ''
       },
       isLoaded: false,
       submitting: false,
       accountLoading: false,
+      banks: { 0: 'TeaBank' },
       formValidateResult: {
         account_number: false,
+        bankId: true,
         name: false
       },
       rules: {
@@ -90,6 +104,13 @@ export default {
             message: 'Tên gợi nhớ từ 1 tới 150 kí tự',
             trigger: 'change'
           }
+        ],
+        bankId: [
+          {
+            required: true,
+            message: 'Ngân hàng Không được bỏ trống',
+            trigger: 'change'
+          }
         ]
       }
     };
@@ -101,6 +122,9 @@ export default {
     hasChanged() {
       return Object.keys(this.form).some(k => this.form[k] !== '');
     }
+  },
+  created() {
+    this.getBanks();
   },
   methods: {
     async save() {
@@ -149,6 +173,20 @@ export default {
 
         this.form.account_name = result.name;
         this.formValidateResult.account_name = true;
+      }
+    },
+    async getBanks() {
+      const api = new TransferApi();
+      api.setToken(this.$store.state.user.token);
+
+      const res = await api.getFee();
+
+      const result = res.result();
+      if (result.external) {
+        result.external.forEach(b => {
+          this.banks[b.bank_id] = b.bank_name;
+        });
+        this.banks = { ...this.banks };
       }
     },
     reset(formName) {

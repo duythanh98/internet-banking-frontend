@@ -204,8 +204,8 @@ export default {
 <style scoped>
 .show-pwd {
   position: absolute;
-  right: 10px;
-  top: 7px;
+  right: 30px;
+  top: 2px;
   font-size: 16px;
   cursor: pointer;
   user-select: none;
