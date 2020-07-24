@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import AccountList from '@/components/Acocunt/List';
+import AccountList from '@/components/Account/List';
 export default {
   components: { AccountList },
   data() {

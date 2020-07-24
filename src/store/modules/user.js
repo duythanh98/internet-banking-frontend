@@ -4,7 +4,7 @@ import LoginApi from '@/api/prod/login.api';
 import UserApi from '@/api/prod/user.api';
 import ReminderApi from '@/api/prod/reminder.api';
 import ContactApi from '@/api/prod/contact.api';
-// import AccountApi from '@/api/prod/account.api';
+import AccountApi from '@/api/prod/account.api';
 
 const state = {
   token: getToken(),
@@ -290,6 +290,25 @@ const actions = {
 
     // return result;
     return [];
+  },
+
+  async createNewAccount({ commit, state }, form) {
+    const api = new AccountApi();
+    api.setToken(state.token);
+
+    const res = await api.createNewAccount(form);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
   },
 
   async getContacts({ commit, state }, form) {
