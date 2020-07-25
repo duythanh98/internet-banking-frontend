@@ -334,7 +334,7 @@ const actions = {
     const api = new ContactApi();
     api.setToken(state.token);
 
-    const res = await api.createNewContact(form.account_number, form.bank_id, form.name);
+    const res = await api.createNewContact(form.account_number, form.bankId, form.name);
     console.log(res);
     if (res.isFailed()) {
       if (res.status() === 401) {
