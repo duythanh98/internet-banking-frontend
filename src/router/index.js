@@ -227,6 +227,25 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/transactions',
+    component: Layout,
+    meta: {
+      title: 'Lịch sử giao dịch',
+      icon: 'contact',
+      roles: ['customer']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/transactions/page'),
+        name: 'TransactionList',
+        meta: {
+          title: 'Chuyển tiền'
+        }
+      }
+    ]
+  },
   // {
   //   path: '/permission',
   //   component: Layout,

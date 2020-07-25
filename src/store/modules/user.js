@@ -366,6 +366,25 @@ const actions = {
     const result = res.result();
 
     return result;
+  },
+
+  async getTransferTransactions({ commit, state }) {
+    const api = new AccountApi();
+    api.setToken(state.token);
+
+    const res = await api.getTransferTransactions();
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
   }
 };
 

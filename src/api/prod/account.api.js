@@ -20,4 +20,10 @@ export default class AccountApi extends BaseApi {
 
     return this.post();
   }
+
+  getTransferTransactions(id = 'me') {
+    this.setUrl(`/users/${id}/transactions/transfers`);
+
+    return this.get();
+  }
 }
