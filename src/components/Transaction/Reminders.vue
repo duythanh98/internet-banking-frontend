@@ -61,7 +61,6 @@
           <div>{{ row.sender_pay_fee === 1 ? "Người gửi" : "Người nhận" }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="Nội dung" prop="note" align="left" header-align="center" sortable />
       <el-table-column label="Thời gian gửi" prop="updated_at" align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ formatTime(row.updated_at) }}</div>
@@ -123,7 +122,7 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch(`user/getTransferTransactions`);
+        const result = await this.$store.dispatch(`user/getReminderTransactions`);
 
         this.pagination = result;
         this.loading = false;

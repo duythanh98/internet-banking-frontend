@@ -127,9 +127,8 @@ export const asyncRoutes = [
     path: '/accounts',
     component: Layout,
     meta: {
-      title: 'Tài khoản',
-      icon: 'user',
-      roles: ['customer']
+      title: 'Quản lí tài khoản',
+      icon: 'user'
     },
     children: [
       {
@@ -138,7 +137,8 @@ export const asyncRoutes = [
         component: () => import('@/views/accounts/page'),
         meta: {
           title: 'Tài khoản',
-          icon: 'user'
+          icon: 'user',
+          roles: ['customer']
         }
       },
       {
@@ -147,11 +147,11 @@ export const asyncRoutes = [
         component: () => import('@/views/accounts/add'),
         meta: {
           title: 'Thêm mới tài khoản',
-          icon: 'user'
+          icon: 'user',
+          roles: ['employee']
         }
       }
     ]
-
   },
   {
     path: '/transfer',
@@ -231,9 +231,8 @@ export const asyncRoutes = [
     path: '/transactions',
     component: Layout,
     meta: {
-      title: 'Lịch sử giao dịch',
-      icon: 'contact',
-      roles: ['customer']
+      title: 'Giao dịch',
+      icon: 'transaction'
     },
     children: [
       {
@@ -241,7 +240,7 @@ export const asyncRoutes = [
         component: () => import('@/views/transactions/page'),
         name: 'TransactionList',
         meta: {
-          title: 'Chuyển tiền'
+          title: 'Lịch sử giao dịch'
         }
       }
     ]

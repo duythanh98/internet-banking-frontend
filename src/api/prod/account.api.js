@@ -26,4 +26,10 @@ export default class AccountApi extends BaseApi {
 
     return this.get();
   }
+
+  getReminderTransactions(id = 'me') {
+    this.setUrl(`/users/${id}/transactions/reminders`);
+
+    return this.get();
+  }
 }
