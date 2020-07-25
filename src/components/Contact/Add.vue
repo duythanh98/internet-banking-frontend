@@ -179,7 +179,7 @@ export default {
           return;
         }
 
-        this.form.account_name = result.name;
+        this.form.account_name = (typeof result === 'string' ? result : result.name);
         this.formValidateResult.account_name = true;
       }
     },

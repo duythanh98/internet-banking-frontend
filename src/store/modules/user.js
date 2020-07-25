@@ -404,6 +404,25 @@ const actions = {
     const result = res.result();
 
     return result;
+  },
+
+  async deposit({ commit, state }, form) {
+    const api = new AccountApi();
+    api.setToken(state.token);
+
+    const res = await api.deposit(form);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
   }
 };
 

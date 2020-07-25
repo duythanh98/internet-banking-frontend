@@ -71,7 +71,7 @@
                 </el-col>
                 <el-col :xs="12" :sm="12" :lg="12" :md="12" class="card-panel-col">
                   <div class="card-panel-account">
-                    {{ filter.account_number }}
+                    {{ form.account_number }}
                   </div>
                 </el-col>
               </el-row>
@@ -93,6 +93,7 @@
             :disabled="formInvalid || submitting"
             :loading="submitting"
             type="primary"
+            @click="save"
           >Nạp tiền</el-button>
         </div>
       </el-form>
@@ -127,7 +128,9 @@ export default {
     return {
       form: {
         amount: '',
-        account_name: ''
+        account_name: '',
+        account_number: '',
+        balance: ''
       },
       isLoaded: false,
       submitting: false,
@@ -184,11 +187,11 @@ export default {
   },
   methods: {
     async handleFilter() {
-      const isValid = this.filter.account_number && /^\d{16}$/.test(this.filter.account_number);
+      const isValid = (this.filter.account_number && /^\d{16}$/.test(this.filter.account_number)) ||
+        (this.filter.username.length >= 6 && this.filter.username.length <= 32);
       this.formValidateResult.account_name = false;
 
       if (!isValid) {
-        this.filter.account_number = '';
         return false;
       }
 
@@ -197,9 +200,15 @@ export default {
 
       const api = new AccountApi();
       api.setToken(this.$store.state.user.token);
-      const res = await api.getUserNameByAccountNumber(this.filter.account_number);
 
+      let res = null;
       this.accountLoading = false;
+
+      if (this.filterValidateResult.account_number && this.filter.account_number) {
+        res = await api.getUserNameByAccountNumber(this.filter.account_number);
+      } else {
+        res = await api.getUserInfoByUsername(this.filter.username);
+      }
 
       if (!res.isFailed()) {
         const result = res.result();
@@ -210,14 +219,38 @@ export default {
           return;
         }
 
-        this.form.account_name = result.name;
+        if (result.data && Array.isArray(result.data) && result.data.length > 0) {
+          this.form.account_name = result.data[0].name;
+          this.form.account_number = result.data[0].account.account_number;
+        } else {
+          this.form.account_name = result.name;
+          this.form.account_number = this.filter.account_number;
+        }
         this.formValidateResult.account_name = true;
+        this.filterValidateResult.account_number = false;
         this.isLoaded = true;
         this.submitting = false;
-        return;
+
+        return this.reset('filter');
       }
       this.submitting = false;
       this.$notify.error({ message: 'Có lỗi xảy ra', position: 'bottom-right' });
+    },
+    async save() {
+      this.submitting = true;
+
+      try {
+        await this.$store.dispatch('user/deposit',
+          { account_number: this.form.account_number, amount: this.form.amount });
+        this.reset('form');
+
+        this.$notify.success({ message: 'Nạp tiền thành công thành công', position: 'bottom-right' });
+        this.reset('form');
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      } finally {
+        this.submitting = false;
+      }
     },
     reset(formName) {
       this.$refs[formName].resetFields();

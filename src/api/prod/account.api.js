@@ -7,6 +7,12 @@ export default class AccountApi extends BaseApi {
     return this.get();
   }
 
+  getUserInfoByUsername(username) {
+    this.setUrl(`/users?username=${username}`);
+
+    return this.get();
+  }
+
   getExternalAccount(accountNumber, bankId) {
     this.setUrl(`/banks/${bankId}/${accountNumber}`);
 
@@ -31,5 +37,13 @@ export default class AccountApi extends BaseApi {
     this.setUrl(`/users/${id}/transactions/reminders`);
 
     return this.get();
+  }
+
+  deposit(data) {
+    const { account_number, amount } = data;
+    this.setUrl(`/accounts/${account_number}/deposit`);
+
+    this.setData({ amount });
+    return this.post();
   }
 }
