@@ -201,6 +201,26 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/deposit',
+    component: Layout,
+    meta: {
+      title: 'Nạp tiền',
+      icon: 'money'
+      // roles: ['employee']
+    },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/deposits/page'),
+        name: 'Deposit',
+        meta: {
+          title: 'Nạp tiền',
+          icon: 'money'
+        }
+      }
+    ]
+  },
+  {
     path: '/contacts',
     component: Layout,
     meta: {

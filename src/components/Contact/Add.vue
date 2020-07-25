@@ -5,7 +5,7 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="account_number" label="Số tài khoản người nhận">
-              <el-input v-model.trim="form.account_number" maxlength="16" @input="onAccountChange" />
+              <el-input v-model.trim="form.account_number" @input="onAccountChange" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
@@ -58,8 +58,8 @@ export default {
 
   data() {
     const accountNumberValidator = (rule, value, cb) => {
-      if (!value || !/^\d{16}$/.test(value)) {
-        return cb(new Error('Số tài khoản gồm 16 chữ số'));
+      if (!value || !/^\d+$/.test(value)) {
+        return cb(new Error('Số tài khoản chỉ bao gồm kí tự số'));
       }
 
       if (value === this.currentAccount) {
@@ -145,7 +145,7 @@ export default {
       }
     },
     async onAccountChange(accountNumber) {
-      const isValid = accountNumber && /^\d{16}$/.test(accountNumber) && accountNumber !== this.currentAccount;
+      const isValid = accountNumber && /^\d+$/.test(accountNumber) && accountNumber !== this.currentAccount;
       this.formValidateResult.account_name = false;
 
       if (!isValid) {
