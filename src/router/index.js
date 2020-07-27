@@ -127,7 +127,7 @@ export const asyncRoutes = [
     path: '/accounts',
     component: Layout,
     meta: {
-      title: 'Quản lí tài khoản',
+      title: 'Tài khoản',
       icon: 'user'
     },
     children: [
@@ -149,6 +149,35 @@ export const asyncRoutes = [
           title: 'Thêm mới tài khoản',
           icon: 'user'
           // roles: ['employee']
+        }
+      }
+    ]
+  },
+  {
+    path: '/users',
+    component: Layout,
+    meta: {
+      title: 'Người dùng',
+      icon: 'user'
+    },
+    children: [
+      {
+        path: '',
+        name: 'UserList',
+        component: () => import('@/views/users/page'),
+        meta: {
+          title: 'Danh sách người dùng',
+          icon: 'user',
+          roles: ['admin', 'employee']
+        }
+      },
+      {
+        path: 'new',
+        name: 'AddUser',
+        component: () => import('@/views/users/add'),
+        meta: {
+          title: 'Thêm mới người dùng',
+          roles: ['admin', 'employee']
         }
       }
     ]

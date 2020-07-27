@@ -462,6 +462,25 @@ const actions = {
     const result = res.result();
 
     return result;
+  },
+
+  async getUsers({ commit, state }, pagination) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.getUsers(pagination);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
   }
 };
 

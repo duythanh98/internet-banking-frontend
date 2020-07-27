@@ -7,6 +7,13 @@ export default class UserApi extends BaseApi {
     return this.get();
   }
 
+  getUsers(pagination) {
+    const { current_page, per_page } = pagination;
+    this.setUrl(`/users?page=${current_page || 1}&limit=${per_page || 10}`);
+
+    return this.get();
+  }
+
   getMyAccount() {
     this.setUrl(`/users/me/account`);
     return this.get();
