@@ -110,7 +110,7 @@
             <el-step title="Nhập OTP" />
           </el-steps>
           <step-1 v-show="step === 0" v-model="transferForm" :debt-info="selectedDebt" @next-step="goToOTPStep" @cancel="cancel" />
-          <step-2 v-show="step === 1" v-model="otp" :transfer="transfer" @next-step="pay" @cancel="cancel" />
+          <step-2 v-show="step === 1" v-model="otp" :transfer="transfer" @next-step="transferNow" @cancel="cancel" />
         </div>
       </div>
     </el-dialog>
@@ -326,29 +326,44 @@ export default {
         this.stepProcessing = false;
       }
     },
-    async pay() {
+    async transferNow() {
       this.submitting = true;
+      this.stepProcessing = true;
 
-      try {
-        await this.$store.dispatch('user/payDebt',
-          { reminderId: this.selectedDebt.id, otp: this.otp, transfer_id: this.transfer.transfer_id });
-        this.step = 0;
-        this.debtPaymentShowing = false;
+      const otp = this.otp;
+      const transfer = new TransferApi();
+      transfer.setToken(this.$store.getters.token);
 
-        this.resetPaymentForm();
-        this.reload();
+      const res = await transfer.acceptTransfer(this.transfer.transfer_id, otp, this.transfer.transfer_code);
 
-        this.$notify.success({ message: 'Thanh toán thành công' });
-      } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
-      } finally {
+      this.stepProcessing = false;
+      console.log(res);
+
+      if (res.isFailed()) {
+        switch (res.status()) {
+          // case 422: this.$notify.error('Bạn không đủ tiền thực hiện giao dịch này'); break;
+          case 410: this.$notify.error('Hết thời gian nhập mã OTP'); break;
+          default: this.$notify.error('Có lỗi xảy ra, hãy thử lại sau');
+        }
+
         this.submitting = false;
         this.stepProcessing = false;
+
+        return this.cancel();
       }
+
+      this.step = 0;
+      this.submitting = false;
+      this.stepProcessing = false;
+      this.debtPaymentShowing = false;
+
+      this.resetPaymentForm();
+      this.reload();
     },
     cancel() {
       this.step = 0;
       this.debtPaymentShowing = false;
+      this.resetPaymentForm();
     },
     handleFilter() {
       this.$refs.filter.validate(valid => {
