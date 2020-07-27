@@ -5,9 +5,13 @@
         <span slot="label"><svg-icon icon-class="info" /> {{ `Chuyển khoản (${transfer})` }}</span>
         <transfer-transaction ref="transfer" @reload-completed="transferReloadCompleted" />
       </el-tab-pane>
-      <el-tab-pane name="reminder">
-        <span slot="label"><svg-icon icon-class="info" /> {{ `Thanh toán nợ (${reminder})` }}</span>
-        <reminder-transaction ref="reminder" @reload-completed="reminderReloadCompleted" />
+      <el-tab-pane name="debt">
+        <span slot="label"><svg-icon icon-class="info" /> {{ `Thanh toán nợ (${debt})` }}</span>
+        <debt-transaction ref="debt" @reload-completed="debtReloadCompleted" />
+      </el-tab-pane>
+      <el-tab-pane name="deposit">
+        <span slot="label"><svg-icon icon-class="info" /> {{ `Nhận tiền (${deposit})` }}</span>
+        <deposit-transaction ref="deposit" @reload-completed="depositReloadCompleted" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -15,20 +19,23 @@
 
 <script>
 import TransferTransaction from '@/components/Transaction/Transfers';
-import ReminderTransaction from '@/components/Transaction/Reminders';
+import DepositTransaction from '@/components/Transaction/Deposits';
+import DebtTransaction from '@/components/Transaction/Debts';
 
 export default {
-  components: { TransferTransaction, ReminderTransaction },
+  components: { TransferTransaction, DebtTransaction, DepositTransaction },
   data() {
     return {
       tabs: 'transfer',
       transfer: 0,
-      reminder: 0
+      debt: 0,
+      deposit: 0
     };
   },
   mounted() {
     this.$refs.transfer.load();
-    this.$refs.reminder.load();
+    this.$refs.debt.load();
+    this.$refs.deposit.load();
   },
   methods: {
     changeTab() {
@@ -39,8 +46,11 @@ export default {
     transferReloadCompleted() {
       this.transfer = this.$refs.transfer.$data.pagination.total;
     },
-    reminderReloadCompleted() {
-      this.reminder = this.$refs.reminder.$data.pagination.total;
+    debtReloadCompleted() {
+      this.debt = this.$refs.debt.$data.pagination.total;
+    },
+    depositReloadCompleted() {
+      this.deposit = this.$refs.deposit.$data.pagination.total;
     }
   }
 };

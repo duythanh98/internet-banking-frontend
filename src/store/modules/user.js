@@ -370,30 +370,11 @@ const actions = {
     return result;
   },
 
-  async getTransferTransactions({ commit, state }) {
+  async getTransactions({ commit, state }, data) {
     const api = new AccountApi();
     api.setToken(state.token);
 
-    const res = await api.getTransferTransactions();
-
-    if (res.isFailed()) {
-      if (res.status() === 401) {
-        throw new Error('Phiên đăng nhập hết hạn');
-      }
-
-      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
-    }
-
-    const result = res.result();
-
-    return result;
-  },
-
-  async getReminderTransactions({ commit, state }) {
-    const api = new AccountApi();
-    api.setToken(state.token);
-
-    const res = await api.getReminderTransactions();
+    const res = await api.getTransactions(data.id || 'me', data.type, data.pagination);
 
     if (res.isFailed()) {
       if (res.status() === 401) {

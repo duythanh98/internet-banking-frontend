@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row class="filter-container" type="flex" justify="space-between">
       <el-col>
-        <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
+        <!-- <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
           <el-form-item prop="keyword">
             <el-input
               v-model="filter.keyword"
@@ -20,7 +20,7 @@
               @click="handleFilter"
             >Tìm kiếm</el-button>
           </el-form-item>
-        </el-form>
+        </el-form> -->
       </el-col>
       <el-col style="text-align: right">
         <el-button
@@ -53,7 +53,7 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="STK người nhận" prop="to_account" align="right" header-align="center" sortable />
-      <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>
+      <el-table-column label="Số tiền trả" prop="amount" align="right" header-align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.amount | toThousandFilter }}đ</div>
         </template>
@@ -64,12 +64,12 @@
           <div>{{ row.fee | toThousandFilter }}đ</div>
         </template>
       </el-table-column>
-      <el-table-column label="Người trả phí" prop="sender_pay_fee" align="center" header-align="center" sortable>
+      <!-- <el-table-column label="Người trả phí" prop="sender_pay_fee" align="center" header-align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.sender_pay_fee === 1 ? "Người gửi" : "Người nhận" }}</div>
         </template>
-      </el-table-column>
-      <el-table-column label="Thời gian gửi" prop="updated_at" align="center" sortable>
+      </el-table-column> -->
+      <el-table-column label="Thời gian trả" prop="updated_at" align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.updated_at ? formatTime(row.updated_at) : 'Không biết' }}</div>
         </template>
@@ -79,7 +79,7 @@
     <el-pagination
       v-show="pagination.total > 0"
       :page-sizes="[10, 20, 30, 50]"
-      :page-size="pagination.per_page"
+      :page-size="+pagination.per_page"
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total"
       style="margin-top: 10px"
@@ -130,7 +130,8 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch(`user/getReminderTransactions`);
+        const result = await this.$store.dispatch(`user/getTransactions`,
+          { type: 'debt', pagination: this.pagination });
 
         this.pagination = result;
         this.loading = false;
