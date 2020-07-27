@@ -31,4 +31,12 @@ export default class UserApi extends BaseApi {
 
     return this.post();
   }
+
+  changePassword(id = 'me', data) {
+    this.setUrl(`users/${id}/password`);
+    const { password, newPassword } = data;
+    this.setData({ old_password: password, new_password: newPassword });
+
+    return this.put();
+  }
 }

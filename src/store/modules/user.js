@@ -422,15 +422,17 @@ const actions = {
       if (res.status() === 422) {
         const r = res.result();
 
-        if (r && r.amount && Array.isArray(r.amount)) {
-          if (r.amount.includes('paid')) {
+        if (r && r.reminder && Array.isArray(r.reminder)) {
+          if (r.reminder.includes('paid')) {
             throw new Error('Nhắc nợ này đã được thanh toán');
           }
 
-          if (r.amount.includes('canceled')) {
+          if (r.reminder.includes('canceled')) {
             throw new Error('Nhắc nợ này đã bị huỷ');
           }
+        }
 
+        if (r && r.amount && Array.isArray(r.amount)) {
           if (r.amount.includes('not_enough')) {
             throw new Error('Bạn không đủ tiền thực hiện giao dịch này');
           }
@@ -454,6 +456,35 @@ const actions = {
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async changePassword({ commit, state }, data) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.changePassword('me', data);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      if (res.status() === 422) {
+        const r = res.result();
+
+        if (r && r.old_password) {
+          if (r.old_password === 'incorrect') {
+            throw new Error('Mật khẩu không đúng');
+          }
+        }
       }
 
       throw new Error('Có lỗi xảy ra, hãy thử lại sau');

@@ -115,13 +115,13 @@ export default {
         password: [
           {
             required: true,
-            message: 'Password không được để trống',
+            message: 'Mật khẩu không được để trống',
             trigger: ['change']
           },
           {
             min: 6,
             max: 16,
-            message: 'Password phải từ 6 đến 16 kí tự',
+            message: 'Mật khẩu phải từ 6 đến 16 kí tự',
             trigger: ['change']
           }
         ],

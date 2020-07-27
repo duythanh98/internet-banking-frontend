@@ -30,6 +30,9 @@
           <router-link to="/">
             <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link>
+          <router-link to="/change-password">
+            <el-dropdown-item>Đổi mật khẩu</el-dropdown-item>
+          </router-link>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Đăng xuất</span>
           </el-dropdown-item>

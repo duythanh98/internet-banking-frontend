@@ -221,6 +221,10 @@ export default class BaseApi extends EventEmitter {
       return this.send('post');
     }
 
+    put() {
+      return this.send('put');
+    }
+
     get() {
       return this.send('get');
     }

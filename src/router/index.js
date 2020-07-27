@@ -183,6 +183,21 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/change-password',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '',
+        name: 'ChangePassword',
+        component: () => import('@/views/authentication/change-password'),
+        meta: {
+          title: 'Đổi mật khẩu'
+        }
+      }
+    ]
+  },
+  {
     path: '/transfer',
     component: Layout,
     meta: {
