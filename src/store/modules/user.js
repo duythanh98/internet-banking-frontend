@@ -292,11 +292,11 @@ const actions = {
     return [];
   },
 
-  async createNewAccount({ commit, state }, form) {
-    const api = new AccountApi();
+  async createNewUser({ commit, state }, form) {
+    const api = new UserApi();
     api.setToken(state.token);
 
-    const res = await api.createNewAccount(form);
+    const res = await api.createNewUser(form);
 
     if (res.isFailed()) {
       if (res.status() === 401) {

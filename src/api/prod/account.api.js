@@ -19,14 +19,6 @@ export default class AccountApi extends BaseApi {
     return this.get();
   }
 
-  createNewAccount(data) {
-    this.setUrl('/accounts');
-    const { username, password, name, email, phone } = data;
-    this.setData({ username, password, name, email, phone });
-
-    return this.post();
-  }
-
   getTransferTransactions(id = 'me') {
     this.setUrl(`/users/${id}/transactions/transfers`);
 

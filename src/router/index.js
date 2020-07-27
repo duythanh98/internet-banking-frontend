@@ -147,8 +147,8 @@ export const asyncRoutes = [
         component: () => import('@/views/accounts/add'),
         meta: {
           title: 'Thêm mới tài khoản',
-          icon: 'user',
-          roles: ['employee']
+          icon: 'user'
+          // roles: ['employee']
         }
       }
     ]

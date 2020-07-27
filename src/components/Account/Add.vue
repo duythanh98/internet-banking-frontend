@@ -34,7 +34,7 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="phone" label="Số điện thoại">
-              <el-input v-model.number="form.phone" />
+              <el-input v-model="form.phone" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24" />
@@ -67,6 +67,14 @@ export default {
       }
       cb();
     };
+
+    const validPhoneNumber = (rule, value, cb) => {
+      if (value && !/\d{10}/.test(value)) {
+        return cb(new Error('Số điện thoại không đúng định dạng'));
+      }
+      cb();
+    };
+
     return {
       form: {
         username: '',
@@ -151,6 +159,10 @@ export default {
             required: true,
             message: 'Số điện thoại không được để trống',
             trigger: ['change']
+          },
+          {
+            validator: validPhoneNumber,
+            trigger: ['change']
           }
         ]
       }
@@ -170,7 +182,7 @@ export default {
 
       try {
         // eslint-disable-next-line no-unused-vars
-        await this.$store.dispatch('user/createNewAccount', this.form);
+        await this.$store.dispatch('user/createNewUser', this.form);
         this.reset('form');
 
         this.$notify.success({ message: 'Thêm mới thành công', position: 'bottom-right' });
