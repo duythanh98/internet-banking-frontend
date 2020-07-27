@@ -20,4 +20,12 @@ export default class ReminderApi extends BaseApi {
 
     return this.delete();
   }
+
+  pay(data) {
+    const { reminderId, otp, transfer_id } = data;
+    this.setUrl(`/reminders/${reminderId}/pay`);
+    this.setData({ otp, transfer_id });
+
+    return this.post();
+  }
 }

@@ -12,6 +12,11 @@ export default class UserApi extends BaseApi {
     return this.get();
   }
 
+  getAccount(id) {
+    this.setUrl(`/users/${id}/account`);
+    return this.get();
+  }
+
   createNewUser(data) {
     this.setUrl('/users');
     const { username, password, name, email, phone } = data;

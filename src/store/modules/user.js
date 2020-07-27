@@ -85,7 +85,9 @@ const actions = {
       default: commit('SET_ROLES', ['customer']);
     }
 
-    await dispatch('getAccountInfo');
+    if (result.permission !== 1 && result.permission !== 2) {
+      await dispatch('getAccountInfo');
+    }
 
     return result;
   },
@@ -415,6 +417,43 @@ const actions = {
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async payDebt({ commit, state }, form) {
+    const api = new ReminderApi();
+    api.setToken(state.token);
+
+    const res = await api.pay(form);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      if (res.status() === 422) {
+        const r = res.result();
+
+        if (r && r.amount && Array.isArray(r.amount)) {
+          if (r.amount.includes('paid')) {
+            throw new Error('Nhắc nợ này đã được thanh toán');
+          }
+
+          if (r.amount.includes('canceled')) {
+            throw new Error('Nhắc nợ này đã bị huỷ');
+          }
+
+          if (r.amount.includes('not_enough')) {
+            throw new Error('Bạn không đủ tiền thực hiện giao dịch này');
+          }
+        }
       }
 
       throw new Error('Có lỗi xảy ra, hãy thử lại sau');

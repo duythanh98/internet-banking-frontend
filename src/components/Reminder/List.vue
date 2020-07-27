@@ -53,11 +53,14 @@
       @sort-change="handleSortChange"
       @filter-change="handleFilterChange"
     >
-      <el-table-column label="ID" prop="id" sortable align="right" header-align="center" width="70" />
       <el-table-column v-if="reminding" label="Người nợ" prop="receiver.user.name" align="left" header-align="center" sortable />
       <el-table-column v-else label="Người nhắc nợ" prop="sender.name" align="left" header-align="center" sortable />
       <el-table-column v-if="reminding" label="Số tài khoản" prop="receiver.account_number" align="right" header-align="center" sortable />
-      <el-table-column label="Số tiền" prop="amount" align="right" header-align="center" sortable />
+      <el-table-column label="Số tiền" prop="amount" align="right" header-align="center" sortable>
+        <template slot-scope="{row}">
+          <div>{{ row.amount | toThousandFilter }}đ</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Lời nhắc" prop="note" align="left" header-align="center" sortable />
       <el-table-column label="Trạng thái" prop="status" align="center" :filters="statusFilter" filter-placement="bottom-end" sortable>
         <template slot-scope="{row}">
@@ -66,7 +69,7 @@
       </el-table-column>
       <el-table-column label="Ngày tạo" prop="created_at" align="center" sortable>
         <template slot-scope="{row}">
-          <div>{{ formatDate(row.created_at) }}</div>
+          <div>{{ row.created_at ? formatDate(row.created_at) : 'Không biết' }}</div>
         </template>
       </el-table-column>
       <el-table-column label="Thao tác" align="center">
@@ -75,6 +78,7 @@
             v-if="!reminding && row.status === 'created'"
             type="primary"
             size="small"
+            @click="payingDebt(row)"
           ><svg-icon icon-class="payment" /></el-button>
           <el-button
             v-if="row.status === 'created'"
@@ -97,6 +101,19 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     />
+
+    <el-dialog title="Thanh toán nợ" :visible.sync="debtPaymentShowing" width="60%">
+      <div>
+        <div v-loading="stepProcessing">
+          <el-steps :active="step" align-center finish-status="success" style="margin: 20px 0px">
+            <el-step title="Thông tin thanh toán" />
+            <el-step title="Nhập OTP" />
+          </el-steps>
+          <step-1 v-show="step === 0" v-model="transferForm" :debt-info="selectedDebt" @next-step="goToOTPStep" @cancel="cancel" />
+          <step-2 v-show="step === 1" v-model="otp" :transfer="transfer" @next-step="pay" @cancel="cancel" />
+        </div>
+      </div>
+    </el-dialog>
 
     <el-dialog title="Xoá lời nhắc" :visible.sync="isRemovingShowing" width="60%">
       <el-form
@@ -138,9 +155,16 @@
 import waves from '@/directive/waves';
 import permission from '@/directive/permission';
 import moment from 'moment';
+import step_1 from './step/step-1';
+import step_2 from './step/step-2';
+import TransferApi from '@/api/prod/transfer.api';
 
 export default {
   directives: { waves, permission },
+  components: {
+    'step-1': step_1,
+    'step-2': step_2
+  },
   props: {
     reminding: {
       type: Boolean,
@@ -150,6 +174,8 @@ export default {
   data() {
     return {
       isRemovingShowing: false,
+      debtPaymentShowing: false,
+      stepProcessing: false,
       isLoaded: false,
       submitting: false,
       reminderId: 0,
@@ -166,6 +192,10 @@ export default {
       },
       removingForm: {
         note: ''
+      },
+      transferForm: {
+        note: '',
+        sender_pay_fee: true
       },
       loading: false,
       filterRules: {
@@ -192,7 +222,11 @@ export default {
         { text: 'Đã trả', value: 'paid' },
         { text: 'Đã huỷ', value: 'cancel' }
       ],
-      sorts: []
+      selectedDebt: {},
+      transfer: {},
+      otp: '',
+      sorts: [],
+      step: 0
     };
   },
   computed: {
@@ -210,6 +244,8 @@ export default {
         this.pagination = result;
         this.loading = false;
         this.isLoaded = true;
+
+        console.log(result);
 
         this.$emit('reload-completed');
       } catch (err) {
@@ -243,6 +279,76 @@ export default {
       if (!this.isLoaded) {
         this.reload();
       }
+    },
+    payingDebt(debt) {
+      this.selectedDebt = debt;
+      this.debtPaymentShowing = true;
+    },
+    async createTransfer() {
+      const api = new TransferApi();
+      api.setToken(this.$store.getters.token);
+      const res = await api.internalTransfer(
+        this.$store.getters.account,
+        this.selectedDebt.sender.account.account_number,
+        { ...this.selectedDebt, ...this.transferForm }
+      );
+
+      console.log(res);
+
+      if (res.isFailed()) {
+        if (res.status() === 422) {
+          const r = res.result();
+
+          if (r && r.amount && Array.isArray(r.amount)) {
+            if (r.amount.includes('max')) {
+              throw new Error('Số tiền vượt quá số dư tài khoản');
+            }
+
+            throw new Error('Số tiền không hợp lệ');
+          }
+        }
+
+        throw new Error('Có lỗi xảy ra');
+      }
+
+      this.transfer = res.result();
+      this.stepProcessing = false;
+    },
+    async goToOTPStep() {
+      this.stepProcessing = true;
+
+      try {
+        await this.createTransfer();
+        this.step = 1;
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      } finally {
+        this.stepProcessing = false;
+      }
+    },
+    async pay() {
+      this.submitting = true;
+
+      try {
+        await this.$store.dispatch('user/payDebt',
+          { reminderId: this.selectedDebt.id, otp: this.otp, transfer_id: this.transfer.transfer_id });
+        this.step = 0;
+        this.debtPaymentShowing = false;
+
+        this.resetPaymentForm();
+        this.reload();
+
+        this.$notify.success({ message: 'Thanh toán thành công' });
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      } finally {
+        this.submitting = false;
+        this.stepProcessing = false;
+      }
+    },
+    cancel() {
+      this.step = 0;
+      this.debtPaymentShowing = false;
     },
     handleFilter() {
       this.$refs.filter.validate(valid => {
@@ -279,6 +385,13 @@ export default {
     },
     formatDate(time) {
       return moment(time).format('DD/MM/YYYY');
+    },
+    reset(formName) {
+      this.$refs[formName].resetFields();
+    },
+    resetPaymentForm() {
+      this.otp = '';
+      this.transferForm.note = '';
     }
   }
 };
