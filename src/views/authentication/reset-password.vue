@@ -36,7 +36,14 @@
         </el-form-item>
       </el-col>
 
-      <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="createResetPassword">Đặt lại</el-button>
+      <el-row :gutter="60">
+        <el-col :xs="24" :md="12">
+          <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="createResetPassword">Tiếp theo</el-button>
+        </el-col>
+        <el-col :xs="24" :md="12">
+          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="$router.push({name: 'Login'})">Quay lại</el-button>
+        </el-col>
+      </el-row>
     </el-form>
 
     <el-form v-show="step === 2" ref="resettingForm" :model="resettingForm" :rules="resettingRules" class="reset-form" autocomplete="on" label-position="left" @submit.native.prevent @validate="resettingValidated">
@@ -167,6 +174,7 @@ export default {
   },
   methods: {
     async createResetPassword() {
+      this.submitting = true;
       const submit = {};
       if (this.validationResult.username) {
         submit.username = this.form.username;
@@ -187,6 +195,7 @@ export default {
       }
     },
     async resetPassword() {
+      this.submitting = true;
       try {
         await this.$store.dispatch('user/resetPassword', this.resettingForm);
         this.$notify.success({ message: 'Đặt lại mật khẩu thành công', position: 'bottom-right' });

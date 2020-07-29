@@ -501,6 +501,8 @@ const actions = {
 
     const res = await api.createResetPassword(data);
 
+    console.log(res);
+
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
