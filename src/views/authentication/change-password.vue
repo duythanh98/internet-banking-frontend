@@ -14,7 +14,7 @@
           <el-input v-model="form.newPassword" type="password" maxlength="16" />
         </el-form-item>
 
-        <el-form-item prop="reNewPassword" label="Xác nhận mật khẩu mới">
+        <el-form-item prop="reNewPassword" label="Nhập lại mật khẩu mới">
           <el-input v-model="form.reNewPassword" type="password" maxlength="16" />
         </el-form-item>
 
@@ -36,12 +36,6 @@ export default {
     const matchNewPassword = (rule, value, cb) => {
       if (value && value !== this.form.newPassword) {
         return cb(new Error('Không trùng khớp mật khẩu mới'));
-      }
-
-      if (!this.form.sender_pay_fee) {
-        if (value - this.transferFee <= 0) {
-          return cb(new Error(`Số tiền từ ${1 + this.transferFee} - 1,000,000,000`));
-        }
       }
 
       return cb();

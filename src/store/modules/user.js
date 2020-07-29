@@ -493,6 +493,58 @@ const actions = {
     const result = res.result();
 
     return result;
+  },
+
+  async createResetPassword({ commit, state }, data) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.createResetPassword(data);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async resetPassword({ commit, state }, data) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.resetPassword(data);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      if (res.status() === 410) {
+        throw new Error('Đường dẫn này đã hết hạn');
+      }
+
+      if (res.status() === 422) {
+        const r = res.result();
+
+        if (r && r.code) {
+          if (r.code === 'invalid') {
+            throw new Error('Mã không hợp lệ');
+          }
+        }
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
   }
 };
 

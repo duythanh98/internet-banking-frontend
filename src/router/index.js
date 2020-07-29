@@ -50,6 +50,15 @@ export const constantRoutes = [
     hidden: true
   },
   {
+    path: '/reset-password',
+    hidden: true,
+    name: 'ResetPassword',
+    component: () => import('@/views/authentication/reset-password'),
+    meta: {
+      title: 'Đặt lại mật khẩu'
+    }
+  },
+  {
     path: '/auth-redirect',
     component: () => import('@/views/login/auth-redirect'),
     hidden: true

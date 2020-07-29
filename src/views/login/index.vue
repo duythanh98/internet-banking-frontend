@@ -44,6 +44,8 @@
         </el-form-item>
       </el-tooltip>
 
+      <router-link to="/reset-password">Quên mật khẩu?</router-link>
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Đăng nhập</el-button>
     </el-form>
   </div>

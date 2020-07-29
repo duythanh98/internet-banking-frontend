@@ -39,4 +39,19 @@ export default class UserApi extends BaseApi {
 
     return this.put();
   }
+
+  createResetPassword(data) {
+    this.setUrl('/reset-password');
+    this.setData(data); // username or email
+
+    return this.post();
+  }
+
+  resetPassword(data) {
+    this.setUrl('/reset-password');
+    const { password, code, email, reset_id } = data;
+    this.setData({ password, code, email, reset_id });
+
+    return this.put();
+  }
 }
