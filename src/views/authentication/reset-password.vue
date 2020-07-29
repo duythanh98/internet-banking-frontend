@@ -1,52 +1,54 @@
 <template>
   <div class="reset-container">
-    <el-form v-show="step === 1" ref="form" :model="form" :rules="resetRules" class="create-reset-form" autocomplete="on" label-position="left" @submit.native.prevent @validate="validated">
+    <el-form v-if="step === 1" ref="form" :model="form" :rules="resetRules" class="create-reset-form" autocomplete="on" label-position="left" @submit.native.prevent @validate="validated">
       <div class="title-container">
         <h3 class="title">Đặt lại mật khẩu</h3>
       </div>
 
-      <el-col :md="11" :xs="24">
-        <el-form-item prop="username">
-          <el-input
-            ref="username"
-            v-model="form.username"
-            class="filter-item"
-            placeholder="Tên đăng nhập"
-            maxlength="32"
-            tabindex="1"
-            focus
-          />
-        </el-form-item>
-      </el-col>
+      <el-row>
+        <el-col :md="11" :xs="24">
+          <el-form-item prop="username">
+            <el-input
+              ref="username"
+              v-model="form.username"
+              class="filter-item"
+              placeholder="Tên đăng nhập"
+              maxlength="32"
+              tabindex="1"
+              focus
+            />
+          </el-form-item>
+        </el-col>
 
-      <el-col :md="2" :xs="24" style="text-align: center; padding: 15px 0; color: #eee">
-        <div>hoặc</div>
-      </el-col>
+        <el-col :md="2" :xs="24" style="text-align: center; padding: 15px 0; color: #eee">
+          <div>hoặc</div>
+        </el-col>
 
-      <el-col :md="11" :xs="24">
-        <el-form-item prop="email">
-          <el-input
-            ref="email"
-            v-model="form.email"
-            class="filter-item"
-            placeholder="Email"
-            maxlength="150"
-            tabindex="2"
-          />
-        </el-form-item>
-      </el-col>
+        <el-col :md="11" :xs="24">
+          <el-form-item prop="email">
+            <el-input
+              ref="email"
+              v-model="form.email"
+              class="filter-item"
+              placeholder="Email"
+              maxlength="150"
+              tabindex="2"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
       <el-row :gutter="60">
         <el-col :xs="24" :md="12">
           <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="createResetPassword">Tiếp theo</el-button>
         </el-col>
         <el-col :xs="24" :md="12">
-          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="$router.push({name: 'Login'})">Quay lại</el-button>
+          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="$router.push({path: '/login'})">Quay lại</el-button>
         </el-col>
       </el-row>
     </el-form>
 
-    <el-form v-show="step === 2" ref="resettingForm" :model="resettingForm" :rules="resettingRules" class="reset-form" autocomplete="on" label-position="left" @submit.native.prevent @validate="resettingValidated">
+    <el-form v-if="step === 2" ref="resettingForm" :model="resettingForm" :rules="resettingRules" class="reset-form" autocomplete="on" label-position="left" @submit.native.prevent @validate="resettingValidated">
       <div class="title-container">
         <h3 class="title">Nhập mật khẩu mới</h3>
       </div>
@@ -236,7 +238,7 @@ $cursor: #fff;
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 85%;
+    width: 100%;
 
     input {
       background: transparent;
