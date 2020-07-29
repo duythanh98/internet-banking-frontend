@@ -44,7 +44,7 @@
         </el-form-item>
       </el-tooltip>
 
-      <router-link to="/reset-password">Quên mật khẩu?</router-link>
+      <router-link class="forgot-password" to="/reset-password">Quên mật khẩu?</router-link>
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Đăng nhập</el-button>
     </el-form>
@@ -264,6 +264,15 @@ $light_gray:#eee;
     padding: 160px 35px 0;
     margin: 0 auto;
     overflow: hidden;
+
+    .forgot-password {
+      display: block;
+      float: right;
+      color: #eee;
+      font-size: 14px;
+      ;margin-bottom: 20px;
+      text-decoration: underline
+    }
   }
 
   .tips {
