@@ -209,7 +209,7 @@ export default {
   created() {
     this.step = 1;
     const { code, otp } = this.$route.query;
-    if (code && otp && code === this.resettingForm.code) {
+    if (code && otp) {
       this.step = 2;
       this.resettingForm.otp = otp;
       this.havingValidOtp = true;
@@ -235,6 +235,7 @@ export default {
         const result = await this.$store.dispatch('user/createResetPassword', formData);
 
         this.resettingForm.code = result.code;
+        this.step = 2;
         this.reset('form');
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
