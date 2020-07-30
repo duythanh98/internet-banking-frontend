@@ -215,6 +215,7 @@ export default {
       this.step = 2;
       this.resettingForm.code = code;
       this.resettingForm.otp = otp;
+      this.resettingValidationResult.otp = true;
       this.havingValidOtp = true;
     }
   },
@@ -252,6 +253,7 @@ export default {
         await this.$store.dispatch('user/resetPassword', this.resettingForm);
         this.$notify.success({ message: 'Đặt lại mật khẩu thành công', position: 'bottom-right' });
         this.reset('resettingForm');
+        this.resettingValidationResult.otp = true;
         this.$router.push({ name: 'Dashboard' });
         this.step = 1;
       } catch (err) {
