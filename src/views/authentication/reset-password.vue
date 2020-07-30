@@ -64,19 +64,21 @@
         <h3 class="title">Đặt lại mật khẩu</h3>
       </div>
 
-      <p v-if="!havingValidOtp" style="color: #eee">Nhập OTP ứng với mã giao dịch: <strong>{{ resettingForm.code || 'Không có' }}</strong></p>
-      <el-col v-if="!havingValidOtp" :xs="24">
-        <el-form-item prop="otp">
-          <el-input
-            v-model="resettingForm.otp"
-            class="filter-item"
-            placeholder="Nhập OTP"
-            maxlength="6"
-            tabindex="1"
-            focus
-          />
-        </el-form-item>
-      </el-col>
+      <template v-if="!havingValidOtp">
+        <p style="color: #eee">Nhập OTP ứng với mã giao dịch: <strong>{{ resettingForm.code || 'Không có' }}</strong></p>
+        <el-col :xs="24">
+          <el-form-item prop="otp">
+            <el-input
+              v-model="resettingForm.otp"
+              class="filter-item"
+              placeholder="Nhập OTP"
+              maxlength="6"
+              tabindex="1"
+              focus
+            />
+          </el-form-item>
+        </el-col>
+      </template>
 
       <p style="color: #eee">Nhập mật khẩu mới:</p>
       <el-col :xs="24">
@@ -211,6 +213,7 @@ export default {
     const { code, otp } = this.$route.query;
     if (code && otp) {
       this.step = 2;
+      this.resettingForm.code = code;
       this.resettingForm.otp = otp;
       this.havingValidOtp = true;
     }
