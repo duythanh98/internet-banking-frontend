@@ -6,6 +6,21 @@
       </div>
 
       <el-row>
+        <el-form-item>
+          <el-input
+            ref="formText"
+            v-model="form.formText"
+            class="filter-item"
+            placeholder="Tên đăng nhập hoặc email"
+            maxlength="150"
+            tabindex="1"
+            focus
+            @input="inputFormText"
+          />
+        </el-form-item>
+      </el-row>
+
+      <el-row style="display: none">
         <el-col :md="11" :xs="24">
           <el-form-item prop="username">
             <el-input
@@ -18,10 +33,6 @@
               focus
             />
           </el-form-item>
-        </el-col>
-
-        <el-col :md="2" :xs="24" style="text-align: center; padding: 15px 0; color: #eee">
-          <div>hoặc</div>
         </el-col>
 
         <el-col :md="11" :xs="24">
@@ -38,9 +49,9 @@
         </el-col>
       </el-row>
 
-      <el-row :gutter="60">
+      <el-row :gutter="20">
         <el-col :xs="24" :md="12">
-          <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="createResetPassword">Tiếp theo</el-button>
+          <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submit">Đặt lại</el-button>
         </el-col>
         <el-col :xs="24" :md="12">
           <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="$router.push({path: '/login'})">Quay lại</el-button>
@@ -50,9 +61,24 @@
 
     <el-form v-if="step === 2" ref="resettingForm" :model="resettingForm" :rules="resettingRules" class="reset-form" autocomplete="on" label-position="left" @submit.native.prevent @validate="resettingValidated">
       <div class="title-container">
-        <h3 class="title">Nhập mật khẩu mới</h3>
+        <h3 class="title">Đặt lại mật khẩu</h3>
       </div>
 
+      <p v-if="!havingValidOtp" style="color: #eee">Nhập OTP ứng với mã giao dịch: <strong>{{ resettingForm.code || 'Không có' }}</strong></p>
+      <el-col v-if="!havingValidOtp" :xs="24">
+        <el-form-item prop="otp">
+          <el-input
+            v-model="resettingForm.otp"
+            class="filter-item"
+            placeholder="Nhập OTP"
+            maxlength="6"
+            tabindex="1"
+            focus
+          />
+        </el-form-item>
+      </el-col>
+
+      <p style="color: #eee">Nhập mật khẩu mới:</p>
       <el-col :xs="24">
         <el-form-item prop="password">
           <el-input
@@ -81,7 +107,7 @@
         </el-form-item>
       </el-col>
 
-      <el-button :loading="submitting" :disabled="invalidResettingForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="resetPassword">Đặt lại mật khẩu</el-button>
+      <el-button :loading="submitting" :disabled="invalidResettingForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="resetPassword">Đặt lại</el-button>
     </el-form>
   </div>
 </template>
@@ -89,11 +115,11 @@
 <script>
 export default {
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (value && typeof value !== 'string' || value.length < 6 || value.length > 32) {
-        callback(new Error('Tên đăng nhập từ 6 - 32 kí tự'));
+    const validateUsername = (rule, value, cb) => {
+      if (this.form.username && typeof this.form.username !== 'string' || this.form.username.length < 6 || this.form.username.length > 32) {
+        cb(new Error('Tên đăng nhập từ 6 - 32 kí tự'));
       } else {
-        callback();
+        cb();
       }
     };
 
@@ -107,22 +133,34 @@ export default {
 
     return {
       form: {
+        formText: '',
         username: '',
         email: ''
       },
       resettingForm: {
+        otp: '',
         password: '',
         repassword: ''
       },
       resetRules: {
         username: [{ trigger: 'change', validator: validateUsername }],
         email: [{
+          required: true,
           type: 'email',
           message: 'Email không đúng định dạng',
           trigger: ['change']
         }]
       },
       resettingRules: {
+        otp: [
+          {
+            required: true,
+            min: 6,
+            max: 6,
+            message: 'Mã otp dài 6 kí tự',
+            trigger: ['change']
+          }
+        ],
         password: [
           {
             required: true,
@@ -151,16 +189,18 @@ export default {
         email: false
       },
       resettingValidationResult: {
+        otp: false,
         password: false,
         repassword: false
       },
       submitting: false,
+      havingValidOtp: false,
       step: 1
     };
   },
   computed: {
     invalidForm() {
-      return Object.keys(this.validationResult).every(k => this.form[k] === '' || this.validationResult[k] === false);
+      return Object.values(this.validationResult).every(v => v === false);
     },
     invalidResettingForm() {
       return Object.values(this.resettingValidationResult).some(v => v === false);
@@ -168,27 +208,33 @@ export default {
   },
   created() {
     this.step = 1;
-    const { code, email, reset_id } = this.$route.query;
-    if (code && email && reset_id) {
+    const { code, otp } = this.$route.query;
+    if (code && otp && code === this.resettingForm.code) {
       this.step = 2;
-      this.resettingForm = { ...this.resettingForm, code, email, reset_id };
+      this.resettingForm.otp = otp;
+      this.havingValidOtp = true;
     }
   },
   methods: {
-    async createResetPassword() {
-      this.submitting = true;
-      const submit = {};
-      if (this.validationResult.username) {
-        submit.username = this.form.username;
-      } else if (this.validationResult.email) {
-        submit.email = this.form.email;
+    async submit() {
+      const formData = {};
+      if (this.validationResult.email) {
+        formData.email = this.form.formText;
+      } else if (this.validationResult.username) {
+        formData.username = this.form.formText;
       } else {
+        this.validationResult.email = false;
+        this.validationResult.username = false;
         return;
       }
-
+      await this.createResetPassword(formData);
+    },
+    async createResetPassword(formData) {
+      this.submitting = true;
       try {
-        await this.$store.dispatch('user/createResetPassword', submit);
-        this.step = 2;
+        const result = await this.$store.dispatch('user/createResetPassword', formData);
+
+        this.resettingForm.code = result.code;
         this.reset('form');
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
@@ -203,6 +249,7 @@ export default {
         this.$notify.success({ message: 'Đặt lại mật khẩu thành công', position: 'bottom-right' });
         this.reset('resettingForm');
         this.$router.push({ name: 'Dashboard' });
+        this.step = 1;
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
       } finally {
@@ -217,6 +264,10 @@ export default {
     },
     reset(formName) {
       this.$refs[formName].resetFields();
+    },
+    inputFormText(value) {
+      this.form.username = value;
+      this.form.email = value;
     }
   }
 };
@@ -279,7 +330,7 @@ $light_gray:#eee;
 
   .create-reset-form {
     position: relative;
-    width: 720px;
+    width: 520px;
     max-width: 100%;
     padding: 160px 35px 0;
     margin: 0 auto;
