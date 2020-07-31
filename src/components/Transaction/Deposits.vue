@@ -114,7 +114,8 @@ export default {
           { min: 1, max: 32, message: 'Từ khoá từ 1 tới 32 kí tự', trigger: 'change' }
         ]
       },
-      sorts: []
+      sorts: [],
+      id: this.$route.params.id || 'me'
     };
   },
   methods: {
@@ -122,7 +123,7 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch('user/getTransactions',
-          { type: 'deposit', pagination: this.pagination });
+          { id: this.id, type: 'deposit', pagination: this.pagination });
 
         this.pagination = result;
         this.loading = false;

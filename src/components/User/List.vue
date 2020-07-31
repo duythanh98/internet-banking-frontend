@@ -29,7 +29,7 @@
           style="margin-left: 10px;"
           type="success"
           icon="el-icon-circle-plus"
-          @click="$router.push({name: 'AddContact'})"
+          @click="$router.push({name: 'AddUser'})"
         >Thêm mới</el-button>
         <el-button
           class="filter-item"
@@ -72,7 +72,7 @@
             type="primary"
             icon="el-icon-edit"
             size="small"
-            @click="$router.push({name: 'EditUser', params: {id: row.id}})"
+            @click="$router.push({name: 'ViewUser', params: {id: row.id}})"
           />
           <!-- <el-popconfirm
             title="Bạn có muốn xoá người dùng này không?"

@@ -305,6 +305,28 @@ const actions = {
         throw new Error('Phiên đăng nhập hết hạn');
       }
 
+      if (res.status() === 422) {
+        const r = res.result();
+
+        if (r && r.phone && Array.isArray(r.phone)) {
+          if (r.phone.includes('exists')) {
+            throw new Error('Số điện thoại này đã được đăng kí');
+          }
+        }
+
+        if (r && r.username && Array.isArray(r.username)) {
+          if (r.username.includes('exists')) {
+            throw new Error('Tên đăng nhập này đã tồn tại');
+          }
+        }
+
+        if (r && r.email && Array.isArray(r.email)) {
+          if (r.email.includes('exists')) {
+            throw new Error('Email này đã tồn tại');
+          }
+        }
+      }
+
       throw new Error('Có lỗi xảy ra, hãy thử lại sau');
     }
 
@@ -375,6 +397,8 @@ const actions = {
     api.setToken(state.token);
 
     const res = await api.getTransactions(data.id || 'me', data.type, data.pagination);
+
+    console.log(res);
 
     if (res.isFailed()) {
       if (res.status() === 401) {
@@ -452,6 +476,25 @@ const actions = {
     api.setToken(state.token);
 
     const res = await api.getUsers(pagination);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async getUserInfo({ commit, state }, id) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.getUser(id);
 
     if (res.isFailed()) {
       if (res.status() === 401) {

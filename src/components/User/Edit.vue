@@ -41,7 +41,8 @@
         </el-row>
 
         <div style="text-align: center; margin-top: 20px">
-          <el-button :disabled="formInvalid || submitting" :loading="submitting" type="primary" @click="save">Tạo tài khoản</el-button>
+          <el-button :disabled="formInvalid || submitting" :loading="submitting" type="primary" @click="save">Lưu lại</el-button>
+          <el-button :disabled="formInvalid || submitting" type="danger" @click="reset">Đặt lại</el-button>
         </div>
       </el-form>
     </div>
@@ -81,19 +82,23 @@ export default {
         password: '',
         name: '',
         email: '',
-        phone: ''
+        phone: '',
+        permission: ''
       },
       formValidateResult: {
         username: false,
         password: false,
         name: false,
         email: false,
-        phone: false
+        phone: false,
+        permission: true
       },
+      originalData: {},
       submitting: false,
       duplicatedEmail: [],
       duplicatedUsername: [],
       passwordType: 'password',
+      id: this.$route.params.id || 0,
       rules: {
         username: [
           {
@@ -177,6 +182,18 @@ export default {
     }
   },
   methods: {
+    async load() {
+      try {
+        const result = await this.$store.dispatch('user/getUserInfo', this.id);
+
+        this.originalData = result;
+        Object.keys(this.form).forEach(k => {
+          this.form[k] = this.originalData[k];
+        });
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      }
+    },
     async save() {
       this.submitting = true;
 
@@ -185,8 +202,7 @@ export default {
         await this.$store.dispatch('user/createNewUser', this.form);
         this.reset('form');
 
-        this.$notify.success({ message: 'Thêm mới thành công', position: 'bottom-right' });
-        this.$router.push({ name: 'UserList' });
+        this.$notify.success({ message: 'Chỉnh sửa thành công', position: 'bottom-right' });
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
       } finally {
@@ -203,8 +219,10 @@ export default {
         this.$refs.password.focus();
       });
     },
-    reset(formName) {
-      this.$refs[formName].resetFields();
+    reset() {
+      Object.keys(this.form).forEach(k => {
+        this.form[k] = this.originalData[k];
+      });
     },
     validated(name, valid) {
       this.formValidateResult[name] = valid !== false;

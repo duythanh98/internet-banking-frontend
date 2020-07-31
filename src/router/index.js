@@ -137,7 +137,8 @@ export const asyncRoutes = [
     component: Layout,
     meta: {
       title: 'Tài khoản',
-      icon: 'user'
+      icon: 'user',
+      roles: ['customer']
     },
     children: [
       {
@@ -146,18 +147,7 @@ export const asyncRoutes = [
         component: () => import('@/views/accounts/page'),
         meta: {
           title: 'Tài khoản',
-          icon: 'user',
-          roles: ['customer']
-        }
-      },
-      {
-        path: 'new',
-        name: 'AddAccount',
-        component: () => import('@/views/accounts/add'),
-        meta: {
-          title: 'Thêm mới tài khoản',
           icon: 'user'
-          // roles: ['employee']
         }
       }
     ]
@@ -167,7 +157,8 @@ export const asyncRoutes = [
     component: Layout,
     meta: {
       title: 'Người dùng',
-      icon: 'user'
+      icon: 'user',
+      roles: ['admin', 'employee']
     },
     children: [
       {
@@ -176,7 +167,7 @@ export const asyncRoutes = [
         component: () => import('@/views/users/page'),
         meta: {
           title: 'Danh sách người dùng',
-          icon: 'user',
+          // icon: 'list',
           roles: ['admin', 'employee']
         }
       },
@@ -186,6 +177,17 @@ export const asyncRoutes = [
         component: () => import('@/views/users/add'),
         meta: {
           title: 'Thêm mới người dùng',
+          // icon: 'plus',
+          roles: ['admin', 'employee']
+        }
+      },
+      {
+        path: ':id',
+        name: 'ViewUser',
+        component: () => import('@/views/users/view'),
+        hidden: true,
+        meta: {
+          title: 'Thông tin người dùng',
           roles: ['admin', 'employee']
         }
       }
@@ -258,8 +260,8 @@ export const asyncRoutes = [
     component: Layout,
     meta: {
       title: 'Nạp tiền',
-      icon: 'money'
-      // roles: ['employee']
+      icon: 'money',
+      roles: ['employee']
     },
     children: [
       {
@@ -305,7 +307,8 @@ export const asyncRoutes = [
     component: Layout,
     meta: {
       title: 'Giao dịch',
-      icon: 'transaction'
+      icon: 'transaction',
+      roles: ['customer']
     },
     children: [
       {
