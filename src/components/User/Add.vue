@@ -37,7 +37,18 @@
               <el-input v-model="form.phone" />
             </el-form-item>
           </el-col>
-          <el-col :md="12" :xs="24" />
+          <el-col :md="12" :xs="24">
+            <el-form-item prop="permission" label="Quyền">
+              <el-select v-model="form.permission" placeholder="Chọn quyền" style="width: 100%">
+                <el-option
+                  v-for="(title, value) in permissions"
+                  :key="value"
+                  :label="title"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
 
         <div style="text-align: center; margin-top: 20px">
@@ -81,14 +92,16 @@ export default {
         password: '',
         name: '',
         email: '',
-        phone: ''
+        phone: '',
+        permission: 'customer'
       },
       formValidateResult: {
         username: false,
         password: false,
         name: false,
         email: false,
-        phone: false
+        phone: false,
+        permission: true
       },
       submitting: false,
       duplicatedEmail: [],
@@ -164,7 +177,19 @@ export default {
             validator: validPhoneNumber,
             trigger: ['change']
           }
+        ],
+        permission: [
+          {
+            required: true,
+            message: 'Quyền Không được bỏ trống',
+            trigger: ['change', 'blur']
+          }
         ]
+      },
+      permissions: {
+        'admin': 'Quản trị viên',
+        'employee': 'Giao dịch viên',
+        'customer': 'Khách hàng'
       }
     };
   },

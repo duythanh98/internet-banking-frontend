@@ -26,8 +26,8 @@ export default class UserApi extends BaseApi {
 
   createNewUser(data) {
     this.setUrl('/users');
-    const { username, password, name, email, phone } = data;
-    this.setData({ username, password, name, email, phone });
+    const { username, password, name, email, phone, permission } = data;
+    this.setData({ username, password, name, email, phone, permission });
 
     return this.post();
   }
