@@ -69,7 +69,7 @@ export default {
     };
 
     const validPhoneNumber = (rule, value, cb) => {
-      if (value && !/\d{10}/.test(value)) {
+      if (value && !/^\+?\d{10,12}$/.test(value)) {
         return cb(new Error('Số điện thoại không đúng định dạng'));
       }
       cb();

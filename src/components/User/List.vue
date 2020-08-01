@@ -49,7 +49,7 @@
       sortable="custom"
       highlight-current-row
       style="width: 100%;"
-      @sort-change="handleSortChange"
+      :row-class-name="tableRowClassName"
     >
       <el-table-column label="ID" prop="id" sortable align="right" header-align="center" width="70" />
       <el-table-column label="Tên người dùng" prop="name" align="left" header-align="center" sortable />
@@ -74,14 +74,15 @@
             size="small"
             @click="$router.push({name: 'ViewUser', params: {id: row.id}})"
           />
-          <!-- <el-popconfirm
+          <el-popconfirm
+            v-if="!row.deleted_at"
             title="Bạn có muốn xoá người dùng này không?"
             confirm-button-text="Đồng ý"
             cancel-button-text="Không"
             @onConfirm="remove(row.id)"
           >
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="small" />
-          </el-popconfirm> -->
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -153,15 +154,15 @@ export default {
       }
     },
     async remove(id) {
-      // try {
-      //   await this.$store.dispatch('user/deleteUser', { contactId: id });
+      try {
+        await this.$store.dispatch('user/deleteUser', { id });
 
-      //   this.$notify.success({ message: 'Xoá thành công', position: 'bottom-right' });
-      //   this.reload();
-      //   this.$emit('reload-completed');
-      // } catch (err) {
-      //   this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
-      // }
+        this.$notify.success({ message: 'Xoá thành công', position: 'bottom-right' });
+        this.reload();
+        this.$emit('reload-completed');
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      }
     },
     load() {
       if (!this.isLoaded) {
@@ -193,7 +194,19 @@ export default {
       }
 
       this.reload();
+    },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.deleted_at) {
+        return 'deleted-row';
+      }
+      return '';
     }
   }
 };
 </script>
+
+<style>
+.el-table .deleted-row {
+  color: #ccc !important;
+}
+</style>

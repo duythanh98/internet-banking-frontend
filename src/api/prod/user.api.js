@@ -54,4 +54,18 @@ export default class UserApi extends BaseApi {
 
     return this.put();
   }
+
+  editUser(data) {
+    const { id, name, email, phone, permission } = data;
+    this.setUrl(`users/${id || 'me'}`);
+    this.setData({ name, email, phone, permission });
+
+    return this.put();
+  }
+
+  deleteUser(id) {
+    this.setUrl(`users/${id}`);
+
+    return this.delete();
+  }
 }
