@@ -5,6 +5,7 @@ import UserApi from '@/api/prod/user.api';
 import ReminderApi from '@/api/prod/reminder.api';
 import ContactApi from '@/api/prod/contact.api';
 import AccountApi from '@/api/prod/account.api';
+import TransferApi from '@/api/prod/transfer.api';
 
 const state = {
   token: getToken(),
@@ -582,6 +583,25 @@ const actions = {
             throw new Error('Mã không hợp lệ');
           }
         }
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async getBankTransactions({ commit, state }, data) {
+    const api = new TransferApi();
+    api.setToken(state.token);
+
+    const res = await api.getBankTransactions(data);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
       }
 
       throw new Error('Có lỗi xảy ra, hãy thử lại sau');

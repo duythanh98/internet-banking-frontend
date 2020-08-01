@@ -308,7 +308,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Giao dịch',
       icon: 'transaction',
-      roles: ['customer']
+      roles: ['customer', 'admin']
     },
     children: [
       {
@@ -316,7 +316,17 @@ export const asyncRoutes = [
         component: () => import('@/views/transactions/page'),
         name: 'TransactionList',
         meta: {
-          title: 'Lịch sử giao dịch'
+          title: 'Lịch sử giao dịch',
+          roles: ['customer']
+        }
+      },
+      {
+        path: '',
+        component: () => import('@/views/transactions/banks'),
+        name: 'BankTransaction',
+        meta: {
+          title: 'Lịch sử giao dịch',
+          roles: ['admin']
         }
       }
     ]
