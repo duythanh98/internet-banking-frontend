@@ -53,6 +53,11 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" sortable />
+      <el-table-column label="Tên người nhận" prop="to_account_name" align="left" header-align="center" sortable>
+        <template slot-scope="{row}">
+          <div>{{ row.receiver && row.receiver.user && row.receiver.user.name }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.amount | toThousandFilter }}đ</div>

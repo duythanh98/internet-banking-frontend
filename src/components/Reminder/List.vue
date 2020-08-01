@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row class="filter-container" type="flex" justify="space-between">
       <el-col>
-        <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
+        <!-- <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
           <el-form-item prop="keyword">
             <el-input
               v-model="filter.keyword"
@@ -20,7 +20,7 @@
               @click="handleFilter"
             >Tìm kiếm</el-button>
           </el-form-item>
-        </el-form>
+        </el-form> -->
       </el-col>
       <el-col style="text-align: right">
         <el-button
@@ -61,7 +61,7 @@
           <div>{{ row.amount | toThousandFilter }}đ</div>
         </template>
       </el-table-column>
-      <el-table-column label="Lời nhắc" prop="note" align="left" header-align="center" sortable />
+      <el-table-column label="Ghi chú" prop="note" align="left" header-align="center" sortable />
       <el-table-column label="Trạng thái" prop="status" align="center" :filters="statusFilter" filter-placement="bottom-end" sortable>
         <template slot-scope="{row}">
           <div class="status" :style="{background: status[row.status].color}">{{ status[row.status].text }}</div>

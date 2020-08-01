@@ -50,6 +50,8 @@
       </el-form>
     </div>
 
+    <p v-if="sum >= 0"><strong>Tổng số tiền đã giao dịch: </strong>{{ sum | toThousandFilter }}đ</p>
+
     <el-table
       v-if="pagination.total > 0"
       v-loading="loading"
@@ -62,8 +64,10 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="STK người chuyển" prop="from_account_number" align="right" header-align="center" sortable />
+      <el-table-column label="Tên người chuyển" prop="from_name" align="left" header-align="center" sortable />
       <el-table-column label="Ngân hàng chuyển" prop="from_bank_name" align="center" header-align="center" sortable />
       <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" sortable />
+      <el-table-column label="Tên người nhận" prop="to_name" align="left" header-align="center" sortable />
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" sortable />
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>
         <template slot-scope="{row}">
@@ -124,6 +128,7 @@ export default {
         to: false,
         bankId: true
       },
+      sum: -1,
       pagination: {
         data: [],
         total: 0,
@@ -190,8 +195,14 @@ export default {
         const result = await this.$store.dispatch(`user/getBankTransactions`,
           { ...this.form, ...this.pagination });
 
-        this.pagination = result;
-        this.loading = false;
+        if (result.sum && result.transactions) {
+          this.sum = result.sum.reduce((acc, v) => {
+            return acc + +v.amount;
+          }, 0);
+          this.pagination = result.transactions;
+        } else {
+          this.pagination = result;
+        }
         this.isLoaded = true;
 
         this.$emit('reload-completed');
