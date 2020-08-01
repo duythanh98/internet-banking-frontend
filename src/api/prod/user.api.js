@@ -68,4 +68,10 @@ export default class UserApi extends BaseApi {
 
     return this.delete();
   }
+
+  restoreUser(id) {
+    this.setUrl(`users/${id}/restore`);
+
+    return this.post();
+  }
 }

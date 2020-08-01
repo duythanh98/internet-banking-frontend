@@ -76,12 +76,21 @@
           />
           <el-popconfirm
             v-if="!row.deleted_at"
-            title="Bạn có muốn xoá người dùng này không?"
+            title="Bạn có muốn khoá tài khoản này không?"
             confirm-button-text="Đồng ý"
             cancel-button-text="Không"
             @onConfirm="remove(row.id)"
           >
             <el-button slot="reference" type="danger" icon="el-icon-delete" size="small" />
+          </el-popconfirm>
+          <el-popconfirm
+            v-else
+            title="Bạn có muốn khôi phục tài khoản này không?"
+            confirm-button-text="Đồng ý"
+            cancel-button-text="Không"
+            @onConfirm="restore(row.id)"
+          >
+            <el-button slot="reference" type="warning" icon="el-icon-refresh-left" size="small" />
           </el-popconfirm>
         </template>
       </el-table-column>
@@ -153,11 +162,22 @@ export default {
         this.loading = false;
       }
     },
+    async restore(id) {
+      try {
+        await this.$store.dispatch('user/restoreUser', { id });
+
+        this.$notify.success({ message: 'Khôi phục tài khoản thành công', position: 'bottom-right' });
+        this.reload();
+        this.$emit('reload-completed');
+      } catch (err) {
+        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+      }
+    },
     async remove(id) {
       try {
         await this.$store.dispatch('user/deleteUser', { id });
 
-        this.$notify.success({ message: 'Xoá thành công', position: 'bottom-right' });
+        this.$notify.success({ message: 'Khoá tài khoản thành công', position: 'bottom-right' });
         this.reload();
         this.$emit('reload-completed');
       } catch (err) {

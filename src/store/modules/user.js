@@ -374,6 +374,25 @@ const actions = {
     return result;
   },
 
+  async restoreUser({ commit, state }, data) {
+    const api = new UserApi();
+    api.setToken(state.token);
+
+    const res = await api.restoreUser(data.id);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
   async getContacts({ commit, state }, form) {
     const api = new ContactApi();
     api.setToken(state.token);

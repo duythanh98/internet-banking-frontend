@@ -38,7 +38,7 @@
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
-            <el-form-item prop="permission" label="Quyền">
+            <el-form-item v-permission="['admin']" prop="permission" label="Quyền">
               <el-select v-model="form.permission" placeholder="Chọn quyền" style="width: 100%">
                 <el-option
                   v-for="(title, value) in permissions"
