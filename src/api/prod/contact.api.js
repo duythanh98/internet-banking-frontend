@@ -18,6 +18,18 @@ export default class ContactApi extends BaseApi {
     return this.post();
   }
 
+  getEachContact(contactId = 0) {
+    this.setUrl(`contacts/${contactId}`);
+    return this.get();
+  }
+
+  editContact(contactId, name) {
+    this.setUrl(`/contacts/${contactId}`);
+    this.setData({ name });
+
+    return this.put();
+  }
+
   deleteContact(contactId = 0) {
     this.setUrl(`/contacts/${contactId}`);
     this.setData({});

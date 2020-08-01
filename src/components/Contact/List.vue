@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row class="filter-container" type="flex" justify="space-between">
       <el-col>
-        <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
+        <!-- <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
           <el-form-item prop="keyword">
             <el-input
               v-model="filter.keyword"
@@ -20,7 +20,7 @@
               @click="handleFilter"
             >Tìm kiếm</el-button>
           </el-form-item>
-        </el-form>
+        </el-form> -->
       </el-col>
       <el-col style="text-align: right">
         <el-button

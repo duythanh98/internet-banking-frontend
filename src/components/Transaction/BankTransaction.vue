@@ -188,7 +188,7 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch(`user/getBankTransactions`,
-          this.form);
+          { ...this.form, ...this.pagination });
 
         this.pagination = result;
         this.loading = false;

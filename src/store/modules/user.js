@@ -374,6 +374,44 @@ const actions = {
     return result;
   },
 
+  async getContact({ commit, state }, data) {
+    const api = new ContactApi();
+    api.setToken(state.token);
+
+    const res = await api.getEachContact(data.id);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
+  async editContact({ commit, state }, data) {
+    const api = new ContactApi();
+    api.setToken(state.token);
+
+    const res = await api.editContact(data.id, data.name);
+    console.log(res);
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
   async deleteContact({ commit, state }, form) {
     const api = new ContactApi();
     api.setToken(state.token);
