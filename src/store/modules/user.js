@@ -567,11 +567,11 @@ const actions = {
     return result;
   },
 
-  async getUsers({ commit, state }, pagination) {
+  async getUsers({ commit, state }, data) {
     const api = new UserApi();
     api.setToken(state.token);
 
-    const res = await api.getUsers(pagination);
+    const res = await api.getUsers(data);
 
     if (res.isFailed()) {
       if (res.status() === 401) {

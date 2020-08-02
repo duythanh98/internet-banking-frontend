@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row class="filter-container" type="flex" justify="space-between">
       <el-col>
-        <!-- <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
+        <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
           <el-form-item prop="keyword">
             <el-input
               v-model="filter.keyword"
@@ -20,7 +20,7 @@
               @click="handleFilter"
             >Tìm kiếm</el-button>
           </el-form-item>
-        </el-form> -->
+        </el-form>
       </el-col>
       <el-col style="text-align: right">
         <el-button
@@ -149,7 +149,8 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch('user/getUsers', this.pagination);
+        const result = await this.$store.dispatch('user/getUsers',
+          { ...this.pagination, keyword: this.filter.keyword });
 
         this.pagination = result;
         this.loading = false;
@@ -190,13 +191,8 @@ export default {
       }
     },
     handleFilter() {
-      this.$refs.filter.validate(valid => {
-        if (valid && this.filter.keyword) {
-          this.pagination.current_page = 1;
-          this.reload();
-        }
-        return false;
-      });
+      this.pagination.current_page = 1;
+      this.reload();
     },
     handleSizeChange(val) {
       this.pagination.per_page = val;
