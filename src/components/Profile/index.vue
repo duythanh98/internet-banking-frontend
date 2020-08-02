@@ -5,12 +5,12 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="name" label="Họ tên">
-              <el-input v-model="form.name" maxlength="150" />
+              <el-input v-model="form.name" maxlength="150" :readonly="isCustomer" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
             <el-form-item prop="email" label="Email">
-              <el-input v-model="form.email" maxlength="150" />
+              <el-input v-model="form.email" maxlength="150" :readonly="isCustomer" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -18,24 +18,17 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="phone" label="Số điện thoại">
-              <el-input v-model="form.phone" />
+              <el-input v-model="form.phone" :readonly="isCustomer" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
-            <el-form-item v-permission="['admin']" prop="permission" label="Quyền">
-              <el-select v-model="form.permission" placeholder="Chọn quyền" style="width: 100%">
-                <el-option
-                  v-for="(title, value) in permissions"
-                  :key="value"
-                  :label="title"
-                  :value="value"
-                />
-              </el-select>
+            <el-form-item v-permission="['admin', 'employee']" prop="permission" label="Quyền">
+              <el-input :value="permissions[form.permission]" readonly />
             </el-form-item>
           </el-col>
         </el-row>
 
-        <div v-if="hasChanged" style="text-align: center; margin-top: 20px">
+        <div v-if="hasChanged && !isCustomer" style="text-align: center; margin-top: 20px">
           <el-button :disabled="formInvalid || submitting" :loading="submitting" type="primary" @click="save">Lưu lại</el-button>
           <el-button :disabled="submitting" type="danger" @click="reset">Đặt lại</el-button>
         </div>
@@ -81,7 +74,6 @@ export default {
       originalData: {},
       submitting: false,
       duplicatedEmail: [],
-      id: this.$route.params.id || 0,
       rules: {
         name: [
           {
@@ -144,12 +136,15 @@ export default {
     },
     hasChanged() {
       return Object.keys(this.form).some(k => this.form[k] !== this.originalData[k]);
+    },
+    isCustomer() {
+      return this.form.permission === 'customer';
     }
   },
   methods: {
     async load() {
       try {
-        const result = await this.$store.dispatch('user/getUserInfo', this.id);
+        const result = await this.$store.dispatch('user/getUserInfo', 'me');
         this.originalData = result;
         switch (result.permission) {
           case 1: this.originalData.permission = 'admin'; break;
@@ -167,7 +162,7 @@ export default {
       this.submitting = true;
 
       try {
-        await this.$store.dispatch('user/editUser', { id: this.id, ...this.form });
+        await this.$store.dispatch('user/editUser', { id: 'me', ...this.form });
         Object.keys(this.form).forEach(k => {
           this.originalData[k] = this.form[k];
         });
@@ -190,3 +185,6 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+</style>

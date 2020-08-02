@@ -24,7 +24,7 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/profile/index">
+          <router-link to="/profile">
             <el-dropdown-item>Hồ sơ</el-dropdown-item>
           </router-link>
           <router-link to="/">
