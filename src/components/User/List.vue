@@ -81,7 +81,7 @@
             cancel-button-text="Không"
             @onConfirm="remove(row.id)"
           >
-            <el-button slot="reference" type="danger" icon="el-icon-delete" size="small" />
+            <el-button slot="reference" type="danger" icon="el-icon-lock" size="small" />
           </el-popconfirm>
           <el-popconfirm
             v-else
@@ -90,7 +90,7 @@
             cancel-button-text="Không"
             @onConfirm="restore(row.id)"
           >
-            <el-button slot="reference" type="warning" icon="el-icon-refresh-left" size="small" />
+            <el-button slot="reference" type="success" icon="el-icon-refresh-left" size="small" />
           </el-popconfirm>
         </template>
       </el-table-column>

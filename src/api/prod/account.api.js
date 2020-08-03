@@ -19,9 +19,9 @@ export default class AccountApi extends BaseApi {
     return this.get();
   }
 
-  getTransactions(id = 'me', type = 'deposit', pagination) {
-    const { current_page, per_page } = pagination;
-    this.setUrl(`/users/${id}/transactions?type=${type}&page=${current_page || 1}&limit=${per_page || 10}`);
+  getTransactions(id = 'me', data, type = '', from = '', to = '') {
+    const { current_page, per_page } = data;
+    this.setUrl(`/users/${id}/transactions?page=${current_page || 1}&limit=${per_page || 10}&from=${from}&to=${to}${type !== '' ? ('&type=' + type) : ''}`);
 
     return this.get();
   }

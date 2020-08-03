@@ -127,7 +127,6 @@ export default {
           { id: this.id, type: 'deposit', pagination: this.pagination });
 
         this.pagination = result;
-        this.loading = false;
         this.isLoaded = true;
 
         this.$emit('reload-completed');

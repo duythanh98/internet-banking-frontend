@@ -24,11 +24,11 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
+          <router-link to="/">
+            <el-dropdown-item>Tổng quan</el-dropdown-item>
+          </router-link>
           <router-link to="/profile">
             <el-dropdown-item>Hồ sơ</el-dropdown-item>
-          </router-link>
-          <router-link to="/">
-            <el-dropdown-item>Dashboard</el-dropdown-item>
           </router-link>
           <router-link to="/change-password">
             <el-dropdown-item>Đổi mật khẩu</el-dropdown-item>

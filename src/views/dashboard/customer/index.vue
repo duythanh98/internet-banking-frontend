@@ -4,8 +4,7 @@
     <panel-group />
 
     <div class="table-description">
-      <h3>Giao dịch mới nhất</h3>
-      <p v-if="sum >= 0"><strong>Tổng số tiền đã giao dịch: </strong>{{ sum | toThousandFilter }}đ</p>
+      <h3>Giao dịch gần đây</h3>
     </div>
 
     <el-table
@@ -18,10 +17,29 @@
       style="width: 100%;"
       @sort-change="handleSortChange"
     >
-      <el-table-column label="Người chuyển" prop="from_name" align="left" header-align="center" />
+      <el-table-column label="Thời gian" prop="created_at" align="center" sortable>
+        <template slot-scope="{row}">
+          <div>{{ row.created_at ? formatTime(row.created_at) : 'Không biết' }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="Loại giao dịch" prop="type" align="center" sortable>
+        <template slot-scope="{row}">
+          <div>{{ transactionTypes[row.type] || 'Không biết' }}</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="STK người chuyển" prop="from_account_number" align="left" header-align="center" />
+      <el-table-column label="Tên người chuyển" prop="from_name" align="left" header-align="center">
+        <template slot-scope="{row}">
+          <div>{{ row.sender && row.sender.user.name }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Ngân hàng chuyển" prop="from_bank_name" align="center" header-align="center" />
       <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" />
-      <el-table-column label="Tên người nhận" prop="receiver.user.name" align="left" header-align="center" />
+      <el-table-column label="Tên người nhận" prop="receiver.user.name" align="left" header-align="center">
+        <template slot-scope="{row}">
+          <div>{{ row.receiver && row.receiver.user.name }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" />
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>
         <template slot-scope="{row}">
@@ -29,11 +47,6 @@
         </template>
       </el-table-column>
       <el-table-column label="Nội dung" prop="note" align="left" header-align="center" />
-      <el-table-column label="Thời gian chuyển" prop="created_at" align="center" sortable>
-        <template slot-scope="{row}">
-          <div>{{ row.created_at ? formatTime(row.created_at) : 'Không biết' }}</div>
-        </template>
-      </el-table-column>
     </el-table>
   </div>
 </template>
@@ -59,7 +72,12 @@ export default {
       orderBy: 'desc',
       sortBy: 'created_at',
       loading: false,
-      sum: -1
+      sum: -1,
+      transactionTypes: {
+        '1': 'Chuyển khoản',
+        '2': 'Thanh toán nợ',
+        '3': 'Nhận tiền'
+      }
     };
   },
   created() {
@@ -69,18 +87,13 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch(`user/getBankTransactions`,
-          { from: '', to: '', bankId: '', ...this.pagination,
-            sortBy: this.sortBy, orderBy: this.orderBy });
+        const from = moment().format('YYYY-MM-DD');
+        const to = moment().subtract(30, 'days').format('YYYY-MM-DD');
 
-        if (result.sum && result.transactions) {
-          this.sum = result.sum.reduce((acc, v) => {
-            return acc + +v.amount;
-          }, 0);
-          this.pagination = result.transactions;
-        } else {
-          this.pagination = result;
-        }
+        const result = await this.$store.dispatch(`user/getTransactions`,
+          { id: 'me', from, to, pagination: this.pagination });
+
+        this.pagination = result;
       } catch (err) {
         this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
       } finally {

@@ -13,13 +13,13 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="8" :lg="8" class="card-panel-col">
-      <div class="card-panel" @click="$router.push({name: 'BankTransaction'})">
-        <div class="card-panel-icon-wrapper icon-transaction">
-          <svg-icon icon-class="transaction" class-name="card-panel-icon" />
+      <div class="card-panel" @click="$router.push({name: 'Deposit'})">
+        <div class="card-panel-icon-wrapper icon-money">
+          <svg-icon icon-class="money" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Lịch sử giao dịch
+            Nạp tiền
           </div>
         </div>
       </div>
@@ -30,6 +30,9 @@
 <script>
 export default {
   methods: {
+    handleSetLineChartData(type) {
+      this.$emit('handleSetLineChartData', type);
+    }
   }
 };
 </script>
@@ -66,7 +69,7 @@ export default {
         background: #36a3f7;
       }
 
-      .icon-transaction {
+      .icon-money {
         background: #f4516c;
       }
 
@@ -83,7 +86,7 @@ export default {
       color: #36a3f7;
     }
 
-    .icon-transaction {
+    .icon-money {
       color: #f4516c;
     }
 

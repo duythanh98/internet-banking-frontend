@@ -141,7 +141,6 @@ export default {
           { id: this.id, type: 'transfer', pagination: this.pagination });
 
         this.pagination = result;
-        this.loading = false;
         this.isLoaded = true;
 
         this.$emit('reload-completed');

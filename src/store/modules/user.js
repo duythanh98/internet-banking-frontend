@@ -492,7 +492,7 @@ const actions = {
     const api = new AccountApi();
     api.setToken(state.token);
 
-    const res = await api.getTransactions(data.id || 'me', data.type, data.pagination);
+    const res = await api.getTransactions(data.id || 'me', data.pagination, data.type, data.from || '', data.to || '');
 
     console.log(res);
 

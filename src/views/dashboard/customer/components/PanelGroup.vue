@@ -1,19 +1,31 @@
 <template>
   <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="8" :lg="8" class="card-panel-col">
-      <div class="card-panel" @click="$router.push({name: 'UserList'})">
+    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="$router.push({name: 'Transfer'})">
         <div class="card-panel-icon-wrapper icon-people">
           <svg-icon icon-class="peoples" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Người dùng
+            Chuyển khoản
           </div>
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="8" :lg="8" class="card-panel-col">
-      <div class="card-panel" @click="$router.push({name: 'BankTransaction'})">
+    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="$router.push({name: 'ReminderList'})">
+        <div class="card-panel-icon-wrapper icon-payment">
+          <svg-icon icon-class="payment" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            Nhắc nợ
+          </div>
+        </div>
+      </div>
+    </el-col>
+    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="$router.push({name: 'TransactionList'})">
         <div class="card-panel-icon-wrapper icon-transaction">
           <svg-icon icon-class="transaction" class-name="card-panel-icon" />
         </div>
@@ -24,12 +36,27 @@
         </div>
       </div>
     </el-col>
+    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
+      <div class="card-panel" @click="$router.push({name: 'ContactList'})">
+        <div class="card-panel-icon-wrapper icon-contact">
+          <svg-icon icon-class="contact" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            Liên hệ
+          </div>
+        </div>
+      </div>
+    </el-col>
   </el-row>
 </template>
 
 <script>
 export default {
   methods: {
+    handleSetLineChartData(type) {
+      this.$emit('handleSetLineChartData', type);
+    }
   }
 };
 </script>
@@ -62,7 +89,7 @@ export default {
         background: #40c9c6;
       }
 
-      .icon-message {
+      .icon-payment {
         background: #36a3f7;
       }
 
@@ -70,7 +97,7 @@ export default {
         background: #f4516c;
       }
 
-      .icon-shopping {
+      .icon-contact {
         background: #34bfa3
       }
     }
@@ -79,7 +106,7 @@ export default {
       color: #40c9c6;
     }
 
-    .icon-message {
+    .icon-payment {
       color: #36a3f7;
     }
 
@@ -87,7 +114,7 @@ export default {
       color: #f4516c;
     }
 
-    .icon-shopping {
+    .icon-contact {
       color: #34bfa3
     }
 
@@ -113,7 +140,7 @@ export default {
 
       .card-panel-text {
         color: rgba(0, 0, 0, 0.45);
-        font-size: 22px;
+        font-size: 20px;
       }
 
       .card-panel-num {
