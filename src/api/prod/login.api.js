@@ -1,11 +1,11 @@
 import BaseApi from '../base';
 
 export default class LoginApi extends BaseApi {
-  login(username, password, captchaData) {
+  login(username, password, recaptcha) {
     this.setUrl('/auth/login');
 
     this.setData({
-      username, password
+      username, password, recaptcha
     });
 
     return this.post();

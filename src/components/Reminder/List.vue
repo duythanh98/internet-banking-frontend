@@ -284,41 +284,21 @@ export default {
       this.selectedDebt = debt;
       this.debtPaymentShowing = true;
     },
-    async createTransfer() {
-      const api = new TransferApi();
-      api.setToken(this.$store.getters.token);
-      const res = await api.internalTransfer(
-        this.$store.getters.account,
-        this.selectedDebt.sender.account.account_number,
-        { ...this.selectedDebt, ...this.transferForm }
-      );
-
-      console.log(res);
-
-      if (res.isFailed()) {
-        if (res.status() === 422) {
-          const r = res.result();
-
-          if (r && r.amount && Array.isArray(r.amount)) {
-            if (r.amount.includes('max')) {
-              throw new Error('Số tiền vượt quá số dư tài khoản');
-            }
-
-            throw new Error('Số tiền không hợp lệ');
-          }
-        }
-
-        throw new Error('Có lỗi xảy ra');
+    async payDebt() {
+      try {
+        const result = await this.$store.dispatch('payDebt', { reminderId: this.selectedDebt.id });
+        this.transfer = result;
+      } catch (err) {
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
+      } finally {
+        this.stepProcessing = false;
       }
-
-      this.transfer = res.result();
-      this.stepProcessing = false;
     },
     async goToOTPStep() {
       this.stepProcessing = true;
 
       try {
-        await this.createTransfer();
+        await this.payDebt();
         this.step = 1;
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });

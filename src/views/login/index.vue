@@ -48,7 +48,7 @@
         <vue-recaptcha
           :sitekey="siteKey"
           :load-recaptcha-script="true"
-          @verify="verifiedRecaptcha = true"
+          @verify="verifyRecaptcha"
           @expired="verifiedRecaptcha = false"
         />
       </div>
@@ -60,7 +60,6 @@
   </div>
 </template>
 
-<script src="https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit" async defer></script>
 <script>
 import router from '@/router';
 import VueRecaptcha from 'vue-recaptcha';
@@ -86,7 +85,8 @@ export default {
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        recaptcha: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'change', validator: validateUsername }],
@@ -134,7 +134,6 @@ export default {
       this.refreshLoginSession();
     }
     this.siteKey = process.env.VUE_APP_SITE_KEY || '';
-    console.log(this.siteKey);
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -213,6 +212,12 @@ export default {
     async applyRoute() {
       const accessRoutes = await this.$store.dispatch('permission/generateRoutes', this.$store.state.user.roles);
       router.addRoutes(accessRoutes);
+    },
+    verifyRecaptcha(res) {
+      if (typeof res === 'string') {
+        this.loginForm.recaptcha = res;
+        this.verifiedRecaptcha = true;
+      }
     }
   }
 };

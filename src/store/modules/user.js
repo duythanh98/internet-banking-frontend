@@ -42,10 +42,10 @@ const mutations = {
 const actions = {
   // user login
   async login({ commit }, userInfo) {
-    const { username, password } = userInfo;
+    const { username, password, recaptcha } = userInfo;
 
     const api = new LoginApi();
-    const res = await api.login(username, password);
+    const res = await api.login(username, password, recaptcha);
     if (res.isFailed()) {
       if (res.status() === 422) {
         throw new Error('Tên đăng nhập hoặc mật khẩu không đúng');
@@ -532,7 +532,7 @@ const actions = {
     const api = new ReminderApi();
     api.setToken(state.token);
 
-    const res = await api.pay(form);
+    const res = await api.pay(form.reminderId);
 
     if (res.isFailed()) {
       if (res.status() === 401) {
