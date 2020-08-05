@@ -22,11 +22,6 @@
           <div>{{ row.created_at ? formatTime(row.created_at) : 'Không biết' }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="Loại giao dịch" prop="type" align="center" sortable>
-        <template slot-scope="{row}">
-          <div>{{ transactionTypes[row.type] || 'Không biết' }}</div>
-        </template>
-      </el-table-column>
       <el-table-column label="STK người chuyển" prop="from_account_number" align="left" header-align="center" />
       <el-table-column label="Tên người chuyển" prop="from_name" align="left" header-align="center">
         <template slot-scope="{row}">
@@ -72,12 +67,7 @@ export default {
       orderBy: 'desc',
       sortBy: 'created_at',
       loading: false,
-      sum: -1,
-      transactionTypes: {
-        '1': 'Chuyển khoản',
-        '2': 'Thanh toán nợ',
-        '3': 'Nhận tiền'
-      }
+      sum: -1
     };
   },
   created() {
@@ -87,11 +77,11 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const from = moment().format('YYYY-MM-DD');
-        const to = moment().subtract(30, 'days').format('YYYY-MM-DD');
+        const from = moment().toISOString();
+        const to = moment().subtract(30, 'days').toISOString();
 
         const result = await this.$store.dispatch(`user/getTransactions`,
-          { id: 'me', from, to, pagination: this.pagination });
+          { id: 'me', type: 'transfer', from, to, pagination: this.pagination });
 
         this.pagination = result;
       } catch (err) {

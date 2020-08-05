@@ -193,8 +193,13 @@ export default {
     async reload() {
       this.loading = true;
       try {
+        const submit = {
+          bankId: this.form.bankId,
+          from: moment(this.form.from, 'YYYY-MM-DD').toISOString(),
+          to: moment(this.form.to, 'YYYY-MM-DD').toISOString()
+        };
         const result = await this.$store.dispatch(`user/getBankTransactions`,
-          { ...this.form, ...this.pagination, sortBy: this.sortBy, orderBy: this.orderBy });
+          { ...submit, ...this.pagination, sortBy: this.sortBy, orderBy: this.orderBy });
 
         if (result.sum && result.transactions) {
           this.sum = result.sum.reduce((acc, v) => {

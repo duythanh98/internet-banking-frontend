@@ -52,8 +52,12 @@
       style="width: 100%;"
       @sort-change="handleSortChange"
     >
-      <el-table-column label="STK người chuyển" prop="from_account_number" align="right" header-align="center" sortable />
-      <el-table-column label="Tên người chuyển" prop="from_name" align="left" header-align="center" sortable />
+      <el-table-column label="Tên người chuyển" prop="from_name" align="left" header-align="center" sortable>
+        <template slot-scope="{ row }">
+          <div v-if="row.teller_id !== null">Giao dịch viên</div>
+          <div v-else>{{ row.sender ? row.sender.user.name : row.from_name }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.amount | toThousandFilter }}đ</div>
