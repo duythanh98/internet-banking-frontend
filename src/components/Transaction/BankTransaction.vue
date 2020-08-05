@@ -43,8 +43,8 @@
             </el-form-item>
           </el-col>
 
-          <el-col :md="8" :xs="12" style="padding-bottom: 22px">
-            <el-button type="primary" style="width: 100%" :disabled="formInvalid || submitting" icon="el-icon-folder-checked" @click="reload">Xem danh sách</el-button>
+          <el-col :md="12" :xs="12" style="padding-bottom: 22px">
+            <el-button type="primary" style="width: 100%" :disabled="formInvalid || submitting" icon="el-icon-folder-checked" @click="load">Xem danh sách</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -212,6 +212,11 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    load() {
+      this.pagination.current_page = 1;
+      this.pagination.total = 0;
+      this.reload();
     },
     validated(name, valid) {
       this.formValidateResult[name] = valid !== false;
