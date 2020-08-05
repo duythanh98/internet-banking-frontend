@@ -158,7 +158,7 @@ export default {
 
         this.$emit('reload-completed');
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.loading = false;
       }
@@ -171,7 +171,7 @@ export default {
         this.reload();
         this.$emit('reload-completed');
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       }
     },
     async remove(id) {
@@ -182,7 +182,7 @@ export default {
         this.reload();
         this.$emit('reload-completed');
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       }
     },
     load() {

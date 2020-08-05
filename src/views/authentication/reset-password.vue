@@ -242,7 +242,7 @@ export default {
         this.step = 2;
         this.reset('form');
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.submitting = false;
       }
@@ -257,7 +257,7 @@ export default {
         this.$router.push({ name: 'Dashboard' });
         this.step = 1;
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.submitting = false;
       }

@@ -159,7 +159,7 @@ export default {
         this.$notify.success({ message: 'Thêm mới thành công', position: 'bottom-right' });
         this.$router.push({ name: 'ReminderList', params: { targetedTab: 'reminder' }});
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.submitting = false;
       }

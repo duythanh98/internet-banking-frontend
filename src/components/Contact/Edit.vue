@@ -131,7 +131,7 @@ export default {
 
         this.$notify.success({ message: 'Chỉnh sửa thành công', position: 'bottom-right' });
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.submitting = false;
       }
@@ -146,7 +146,7 @@ export default {
         this.onAccountChange(this.form.account_number);
         this.originalData.name = result.name;
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       }
     },
     async onAccountChange(accountNumber) {

@@ -249,7 +249,7 @@ export default {
 
         this.$emit('reload-completed');
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.loading = false;
       }
@@ -264,7 +264,7 @@ export default {
         this.reload();
         this.$emit('reload-completed');
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.submitting = false;
         this.isRemovingShowing = false;
@@ -321,7 +321,7 @@ export default {
         await this.createTransfer();
         this.step = 1;
       } catch (err) {
-        this.$notify.error(err instanceof Error ? err.message : 'Có lỗi xảy ra');
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.stepProcessing = false;
       }
