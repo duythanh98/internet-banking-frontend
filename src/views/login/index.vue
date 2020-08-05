@@ -44,18 +44,30 @@
         </el-form-item>
       </el-tooltip>
 
+      <div style="margin-bottom: 10px">
+        <vue-recaptcha
+          sitekey="6LePnboZAAAAAEPJjFzIoQ023zr_Bb1KIPfDFsT4"
+          :load-recaptcha-script="true"
+          @verify="verifiedRecaptcha = true"
+          @expired="verifiedRecaptcha = false"
+        />
+      </div>
+
       <div class="forgot-password" @click="$router.push({path: '/reset-password'})">Quên mật khẩu?</div>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Đăng nhập</el-button>
+      <el-button :loading="loading" :disabled="invalidForm || loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Đăng nhập</el-button>
     </el-form>
   </div>
 </template>
 
+<script src="https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit" async defer></script>
 <script>
 import router from '@/router';
+import VueRecaptcha from 'vue-recaptcha';
 
 export default {
   name: 'Login',
+  components: { VueRecaptcha },
   data() {
     const validateUsername = (rule, value, callback) => {
       if (typeof value !== 'string' || value.length < 6 || value.length > 32) {
@@ -80,6 +92,7 @@ export default {
         username: [{ required: true, trigger: 'change', validator: validateUsername }],
         password: [{ required: true, trigger: 'change', validator: validatePassword }]
       },
+      verifiedRecaptcha: false,
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
@@ -98,6 +111,9 @@ export default {
     },
     hasToken() {
       return this.accessToken && this.refreshToken;
+    },
+    invalidForm() {
+      return !this.verifiedRecaptcha;
     }
   },
   watch: {
@@ -113,6 +129,7 @@ export default {
     }
   },
   created() {
+    console.log(process.env.SITE_KEY);
     if (this.hasToken) {
       this.refreshLoginSession();
     }
@@ -259,7 +276,7 @@ $light_gray:#eee;
 
   .login-form {
     position: relative;
-    width: 520px;
+    width: 375px;
     max-width: 100%;
     padding: 160px 35px 0;
     margin: 0 auto;
@@ -270,7 +287,7 @@ $light_gray:#eee;
       color: #eee;
       cursor: pointer;
       font-size: 14px;
-      ;margin-bottom: 20px;
+      margin-bottom: 20px;
       text-decoration: underline
     }
   }
