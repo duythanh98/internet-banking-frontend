@@ -22,6 +22,7 @@
           <el-col :md="12" :xs="24">
             <el-form-item prop="amount" label="Số tiền nợ">
               <el-input v-model.number="form.amount" max="1000000000" min="1" maxlength="10" />
+              <span class="small">Số tiền bạn nhập: <strong>{{ form.amount | toThousandFilter }}đ</strong></span>
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">

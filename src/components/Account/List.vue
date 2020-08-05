@@ -45,7 +45,11 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="Số tài khoản" prop="account_number" align="left" header-align="center" />
-      <el-table-column label="Số dư hiện tại" prop="balance" align="right" header-align="center" />
+      <el-table-column label="Số dư hiện tại" prop="balance" align="right" header-align="center">
+        <template slot-scope="{ row }">
+          <div>{{ row.balance | toThousandFilter }}đ</div>
+        </template>
+      </el-table-column>
     </el-table>
 
     <h3 style="margin-top: 30px; color: #606266;">Tài khoản tiết kiệm</h3>
@@ -60,7 +64,11 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="Số tài khoản" prop="account_number" sortable align="left" header-align="center" />
-      <el-table-column label="Số dư hiện tại" prop="balance" sortable align="right" header-align="center" />
+      <el-table-column label="Số dư hiện tại" prop="balance" sortable align="right" header-align="center">
+        <template slot-scope="{ row }">
+          <div>{{ row.balance | toThousandFilter }}đ</div>
+        </template>
+      </el-table-column>
     </el-table>
 
     <el-pagination
@@ -129,9 +137,7 @@ export default {
 
         this.$emit('reload-completed');
       } catch (err) {
-        this.$notify.error(
-          err instanceof Error ? err.message : 'Có lỗi xảy ra'
-        );
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {
         this.loading = false;
       }

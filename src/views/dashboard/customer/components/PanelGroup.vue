@@ -1,61 +1,101 @@
 <template>
-  <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="$router.push({name: 'Transfer'})">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Chuyển khoản
+  <div>
+    <el-row :gutter="40" class="panel-group">
+      <el-col :xs="12" :sm="16" :lg="16" class="card-panel-col">
+        <div class="card-panel" @click="$router.push({name: 'Account'})">
+          <div class="card-panel-icon-wrapper icon-people">
+            <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+          </div>
+          <div
+            class="card-panel-description"
+            style="flex-direction: column; justify-content: center; align-items: flex-start"
+          >
+            <div class="card-panel-text">
+              <div><span style="display: inline-block; width: 120px">Tài khoản:</span>&nbsp;<span>{{ account.account_number }}</span></div>
+              <div style="margin-top: 10px"><span style="display: inline-block; width: 120px">Số dư:</span>&nbsp;<span>{{ account.balance | toThousandFilter }}đ</span></div>
+            </div>
           </div>
         </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="$router.push({name: 'ReminderList'})">
-        <div class="card-panel-icon-wrapper icon-payment">
-          <svg-icon icon-class="payment" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Nhắc nợ
+      </el-col>
+      <el-col :xs="12" :sm="8" :lg="8" class="card-panel-col">
+        <div class="card-panel" @click="$router.push({name: 'Transfer'})">
+          <div class="card-panel-icon-wrapper icon-lock">
+            <svg-icon icon-class="lock" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Chuyển khoản
+            </div>
           </div>
         </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="$router.push({name: 'TransactionList'})">
-        <div class="card-panel-icon-wrapper icon-transaction">
-          <svg-icon icon-class="transaction" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Lịch sử giao dịch
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="40" class="panel-group">
+      <el-col :xs="12" :sm="8" :lg="8" class="card-panel-col">
+        <div class="card-panel" @click="$router.push({name: 'ReminderList'})">
+          <div class="card-panel-icon-wrapper icon-payment">
+            <svg-icon icon-class="payment" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Nhắc nợ
+            </div>
           </div>
         </div>
-      </div>
-    </el-col>
-    <el-col :xs="12" :sm="6" :lg="6" class="card-panel-col">
-      <div class="card-panel" @click="$router.push({name: 'ContactList'})">
-        <div class="card-panel-icon-wrapper icon-contact">
-          <svg-icon icon-class="contact" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Liên hệ
+      </el-col>
+      <el-col :xs="12" :sm="8" :lg="8" class="card-panel-col">
+        <div class="card-panel" @click="$router.push({name: 'TransactionList'})">
+          <div class="card-panel-icon-wrapper icon-transaction">
+            <svg-icon icon-class="transaction" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Lịch sử giao dịch
+            </div>
           </div>
         </div>
-      </div>
-    </el-col>
-  </el-row>
+      </el-col>
+      <el-col :xs="12" :sm="8" :lg="8" class="card-panel-col">
+        <div class="card-panel" @click="$router.push({name: 'ContactList'})">
+          <div class="card-panel-icon-wrapper icon-contact">
+            <svg-icon icon-class="contact" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Liên hệ
+            </div>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
 export default {
+  data() {
+    return {
+      account: {
+        account_number: '',
+        balance: 0
+      }
+    };
+  },
+  created() {
+    this.reload();
+  },
   methods: {
     handleSetLineChartData(type) {
       this.$emit('handleSetLineChartData', type);
+    },
+    async reload() {
+      try {
+        const res = await this.$store.dispatch('user/getMyAccount');
+        this.account = res;
+      } catch (err) {
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
+      }
     }
   }
 };
@@ -63,7 +103,6 @@ export default {
 
 <style lang="scss" scoped>
 .panel-group {
-  margin-top: 18px;
 
   .card-panel-col {
     margin-bottom: 32px;
@@ -89,6 +128,10 @@ export default {
         background: #40c9c6;
       }
 
+      .icon-lock {
+        background: #957dad;
+      }
+
       .icon-payment {
         background: #36a3f7;
       }
@@ -104,6 +147,10 @@ export default {
 
     .icon-people {
       color: #40c9c6;
+    }
+
+    .icon-lock {
+      color: #957dad;
     }
 
     .icon-payment {
