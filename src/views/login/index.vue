@@ -46,7 +46,7 @@
 
       <div style="margin-bottom: 10px">
         <vue-recaptcha
-          sitekey="6LePnboZAAAAAEPJjFzIoQ023zr_Bb1KIPfDFsT4"
+          :sitekey="siteKey"
           :load-recaptcha-script="true"
           @verify="verifiedRecaptcha = true"
           @expired="verifiedRecaptcha = false"
@@ -99,7 +99,8 @@ export default {
       showDialog: false,
       redirect: undefined,
       otherQuery: {},
-      refreshLogin: false
+      refreshLogin: false,
+      siteKey: ''
     };
   },
   computed: {
@@ -129,10 +130,11 @@ export default {
     }
   },
   created() {
-    console.log(process.env.SITE_KEY);
     if (this.hasToken) {
       this.refreshLoginSession();
     }
+    this.siteKey = process.env.VUE_APP_SITE_KEY || '';
+    console.log(this.siteKey);
   },
   mounted() {
     if (this.loginForm.username === '') {
