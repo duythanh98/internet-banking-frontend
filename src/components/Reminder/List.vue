@@ -286,7 +286,9 @@ export default {
     },
     async payDebt() {
       try {
-        const result = await this.$store.dispatch('payDebt', { reminderId: this.selectedDebt.id });
+        const result = await this.$store.dispatch('user/payDebt', { reminderId: this.selectedDebt.id });
+
+        console.log(result);
         this.transfer = result;
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
@@ -314,7 +316,7 @@ export default {
       const transfer = new TransferApi();
       transfer.setToken(this.$store.getters.token);
 
-      const res = await transfer.acceptTransfer(this.transfer.transfer_id, otp, this.transfer.transfer_code);
+      const res = await transfer.acceptTransfer(this.transfer.id, otp, this.transfer.transfer_code);
 
       this.stepProcessing = false;
       console.log(res);
