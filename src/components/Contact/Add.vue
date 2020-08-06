@@ -82,7 +82,7 @@ export default {
       formValidateResult: {
         account_number: false,
         bankId: true,
-        name: false
+        name: true
       },
       rules: {
         account_number: [
@@ -93,11 +93,6 @@ export default {
           }
         ],
         name: [
-          {
-            required: true,
-            message: 'Tên gợi nhớ Không được bỏ trống',
-            trigger: 'change'
-          },
           {
             min: 1,
             max: 150,
@@ -133,6 +128,9 @@ export default {
       try {
         // eslint-disable-next-line no-unused-vars
         const { account_name, ...submit } = this.form;
+        if (submit.name === '') {
+          submit.name = this.form.account_name || '';
+        }
         await this.$store.dispatch('user/createContact', submit);
         this.reset('form');
 

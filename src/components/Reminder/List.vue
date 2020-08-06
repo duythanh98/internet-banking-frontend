@@ -62,9 +62,9 @@
         </template>
       </el-table-column>
       <el-table-column label="Ghi chú" prop="note" align="left" header-align="center" sortable />
-      <el-table-column label="Trạng thái" prop="status" align="center" :filters="statusFilter" filter-placement="bottom-end" sortable>
+      <el-table-column label="Trạng thái" column-key="status" prop="status" align="center" :filters="statusFilter" filter-placement="bottom-end" sortable>
         <template slot-scope="{row}">
-          <div class="status" :style="{background: status[row.status].color}">{{ status[row.status].text }}</div>
+          <el-tag :type="status[row.status].type">{{ status[row.status].text }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Ngày tạo" prop="created_at" align="center" sortable>
@@ -213,9 +213,9 @@ export default {
         note: false
       },
       status: {
-        paid: { color: '#28a745', text: 'Đã trả' },
-        created: { color: '#007bff', text: 'Đã tạo' },
-        cancel: { color: '#dc3545', text: 'Đã huỷ' }
+        paid: { type: 'success', text: 'Đã trả' },
+        created: { type: 'primary', text: 'Đã tạo' },
+        cancel: { type: 'danger', text: 'Đã huỷ' }
       },
       statusFilter: [
         { text: 'Đã tạo', value: 'created' },
@@ -395,13 +395,4 @@ export default {
 </script>
 
 <style scoped>
-.status {
-  color: #fff;
-  border-radius: 1.5vmin;
-  height: fit-content;
-  width: fit-content;
-  padding: 0.3vmin 0.6vmin;
-  font-size: 2.2vmin;
-  margin: auto auto;
-}
 </style>
