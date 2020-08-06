@@ -316,7 +316,7 @@ export default {
       const transfer = new TransferApi();
       transfer.setToken(this.$store.getters.token);
 
-      const res = await transfer.acceptTransfer(this.transfer.id, otp, this.transfer.transfer_code);
+      const res = await transfer.acceptTransfer(this.transfer.transfer_id, otp, this.transfer.transfer_code);
 
       this.stepProcessing = false;
       console.log(res);
