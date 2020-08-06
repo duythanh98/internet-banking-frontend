@@ -60,6 +60,8 @@
   </div>
 </template>
 
+<script src="https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit" async defer>
+</script>
 <script>
 import router from '@/router';
 import VueRecaptcha from 'vue-recaptcha';
@@ -193,7 +195,7 @@ export default {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery });
             })
             .catch((err) => {
-              this.$notify.error(err.message);
+              this.$notify.error({ message: err.message, position: 'bottom-right' });
             })
             .finally(() => {
               this.loading = false;

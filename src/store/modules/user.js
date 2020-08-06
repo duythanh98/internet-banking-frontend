@@ -42,6 +42,7 @@ const mutations = {
 const actions = {
   // user login
   async login({ commit }, userInfo) {
+    console.log(userInfo);
     const { username, password, recaptcha } = userInfo;
 
     const api = new LoginApi();
