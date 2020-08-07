@@ -10,7 +10,7 @@
           </el-col>
           <el-col :md="12" :xs="24">
             <el-form-item prop="account_name" label="Tên người nhắc nợ">
-              <el-input v-model="form.sender.name" readonly>
+              <el-input :value="form.sender ? form.sender.name : ''" readonly>
                 <el-button v-if="accountLoading" slot="prepend" icon="el-icon-loading" />
               </el-input>
             </el-form-item>

@@ -62,12 +62,12 @@
         </template>
       </el-table-column>
       <el-table-column label="Ghi chú" prop="note" align="left" header-align="center" sortable />
-      <el-table-column label="Trạng thái" column-key="status" prop="status" align="center" :filters="statusFilter" filter-placement="bottom-end" sortable>
+      <el-table-column v-if="filterStatus.length <= 0" label="Trạng thái" column-key="status" prop="status" align="center" :filters="statusFilter" filter-placement="bottom-end" sortable>
         <template slot-scope="{row}">
           <el-tag :type="status[row.status].type">{{ status[row.status].text }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Ngày tạo" prop="created_at" align="center" sortable>
+      <el-table-column :label="reminding ? 'Ngày gửi' : 'Ngày nhận'" prop="created_at" align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.created_at ? formatDate(row.created_at) : 'Không biết' }}</div>
         </template>
@@ -177,6 +177,12 @@ export default {
     reminding: {
       type: Boolean,
       default: false
+    },
+    filterStatus: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
   data() {
@@ -247,7 +253,8 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch(`user/getReminders`,
-          { id: 'me', type: this.reminding ? 'reminders' : 'debts', status: this.filter.status });
+          { id: 'me', type: this.reminding ? 'reminders' : 'debts',
+            status: this.filterStatus.length > 0 ? this.filterStatus : this.filter.status });
 
         this.pagination = result;
         this.isLoaded = true;
