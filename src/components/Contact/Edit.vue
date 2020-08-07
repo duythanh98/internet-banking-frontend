@@ -19,7 +19,7 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="name" label="Tên gợi nhớ">
-              <el-input v-model.trim="form.name" maxlength="150" />
+              <el-input v-model="form.name" maxlength="150" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
@@ -76,7 +76,7 @@ export default {
       formValidateResult: {
         account_number: false,
         bank_id: true,
-        name: false
+        name: true
       },
       rules: {
         account_number: [
@@ -87,11 +87,6 @@ export default {
           }
         ],
         name: [
-          {
-            required: true,
-            message: 'Tên gợi nhớ Không được bỏ trống',
-            trigger: 'change'
-          },
           {
             min: 1,
             max: 150,
@@ -126,8 +121,11 @@ export default {
       this.submitting = true;
 
       try {
-        await this.$store.dispatch('user/editContact', { id: this.id, name: this.form.name });
-        this.originalData.name = this.form.name;
+        const name = this.form.name || this.form.account_name;
+
+        await this.$store.dispatch('user/editContact', { id: this.id, name });
+        this.form.name = name;
+        this.originalData.name = name;
 
         this.$notify.success({ message: 'Chỉnh sửa thành công', position: 'bottom-right' });
       } catch (err) {
@@ -167,7 +165,7 @@ export default {
       api.setToken(this.$store.state.user.token);
       let res = null;
 
-      if (this.form.bank_id === '0') {
+      if (this.form.bank_id === '0' || !this.form.bank_id) {
         res = await api.getUserNameByAccountNumber(accountNumber);
       } else {
         res = await api.getExternalAccount(accountNumber, this.form.bank_id);

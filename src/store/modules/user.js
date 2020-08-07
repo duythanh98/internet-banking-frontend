@@ -219,6 +219,25 @@ const actions = {
     return result;
   },
 
+  async getReminder({ commit, state }, data) {
+    const api = new ReminderApi();
+    api.setToken(state.token);
+
+    const res = await api.getReminder(data.id);
+
+    if (res.isFailed()) {
+      if (res.status() === 401) {
+        throw new Error('Phiên đăng nhập hết hạn');
+      }
+
+      throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    const result = res.result();
+
+    return result;
+  },
+
   async createReminder({ commit, state }, form) {
     const api = new ReminderApi();
     api.setToken(state.token);

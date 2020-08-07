@@ -81,10 +81,18 @@
             @click="payingDebt(row)"
           ><svg-icon icon-class="payment" /></el-button>
           <el-button
+            v-if="!reminding"
+            type="primary"
+            size="small"
+            style="margin: 0 5px"
+            @click="$router.push({name: 'ViewReminder', params: {id: row.id}})"
+          ><svg-icon icon-class="eye-open" /></el-button>
+          <el-button
             v-if="row.status === 'created'"
             type="danger"
             icon="el-icon-delete"
             size="small"
+            style="margin: 0"
             @click="onRemoving(row.id)"
           />
         </template>
@@ -242,7 +250,6 @@ export default {
           { id: 'me', type: this.reminding ? 'reminders' : 'debts', status: this.filter.status });
 
         this.pagination = result;
-        this.loading = false;
         this.isLoaded = true;
 
         console.log(result);

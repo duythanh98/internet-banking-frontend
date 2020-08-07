@@ -4,7 +4,7 @@
     <panel-group />
 
     <div class="table-description">
-      <h3>Giao dịch gần đây</h3>
+      <h3>Giao dịch chuyển khoản gần đây</h3>
     </div>
 
     <el-table
@@ -22,17 +22,10 @@
           <div>{{ row.created_at ? formatTime(row.created_at) : 'Không biết' }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="STK người chuyển" prop="from_account_number" align="left" header-align="center" />
-      <el-table-column label="Tên người chuyển" prop="from_name" align="left" header-align="center">
-        <template slot-scope="{row}">
-          <div>{{ row.sender && row.sender.user.name }}</div>
-        </template>
-      </el-table-column>
-      <el-table-column label="Ngân hàng chuyển" prop="from_bank_name" align="center" header-align="center" />
       <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" />
       <el-table-column label="Tên người nhận" prop="receiver.user.name" align="left" header-align="center">
         <template slot-scope="{row}">
-          <div>{{ row.receiver && row.receiver.user.name }}</div>
+          <div>{{ row.receiver ? row.receiver.user.name : row.to_name }}</div>
         </template>
       </el-table-column>
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" />

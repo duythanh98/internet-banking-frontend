@@ -19,7 +19,7 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="name" label="Tên gợi nhớ">
-              <el-input v-model.trim="form.name" maxlength="150" />
+              <el-input v-model="form.name" maxlength="150" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">

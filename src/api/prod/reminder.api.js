@@ -7,6 +7,12 @@ export default class ReminderApi extends BaseApi {
     return this.get();
   }
 
+  getReminder(id) {
+    this.setUrl(`/reminders/${id}`);
+
+    return this.get();
+  }
+
   createReminder(accountNumber = '', amount = '', note = '') {
     this.setUrl(`/reminders`);
     this.setData({ account_number: accountNumber, amount, note });
