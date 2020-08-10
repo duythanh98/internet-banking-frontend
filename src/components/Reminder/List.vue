@@ -75,7 +75,7 @@
       <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
-            v-if="!reminding && row.status === 'created'"
+            v-if="!reminding && row.status === 'created' && isCurrentCustomer"
             type="primary"
             size="small"
             @click="payingDebt(row)"
@@ -88,7 +88,7 @@
             @click="$router.push({name: 'ViewReminder', params: {id: row.id}})"
           ><svg-icon icon-class="eye-open" /></el-button>
           <el-button
-            v-if="row.status === 'created'"
+            v-if="row.status === 'created' && isCurrentCustomer"
             type="danger"
             icon="el-icon-delete"
             size="small"
@@ -240,12 +240,17 @@ export default {
       transfer: {},
       otp: '',
       sorts: [],
-      step: 0
+      step: 0,
+      id: this.$route.params.id || 'me'
     };
   },
   computed: {
     removingFormInvalid() {
       return Object.values(this.removingFormValidateResult).some(t => t === false);
+    },
+    isCurrentCustomer() {
+      const roles = [...this.$store.getters.roles];
+      return roles.includes('customer');
     }
   },
   methods: {
@@ -253,7 +258,7 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch(`user/getReminders`,
-          { id: 'me', type: this.reminding ? 'reminders' : 'debts',
+          { id: this.id, type: this.reminding ? 'reminders' : 'debts',
             status: this.filterStatus.length > 0 ? this.filterStatus : this.filter.status });
 
         this.pagination = result;

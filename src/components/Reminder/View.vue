@@ -40,7 +40,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div style="text-align: center; margin-top: 20px">
+        <div v-if="isCurrentCustomer" style="text-align: center; margin-top: 20px">
           <el-button v-if="form.status === 'created'" :disabled="submitting" :loading="submitting" type="primary" @click="payingDebt(form)">Thanh toán</el-button>
           <el-button submitting type="danger" @click="$router.push({name: 'ReminderList'})">Quay lại</el-button>
         </div>
@@ -106,6 +106,10 @@ export default {
     };
   },
   computed: {
+    isCurrentCustomer() {
+      const roles = [...this.$store.getters.roles];
+      return roles.includes('customer');
+    }
   },
   created() {
     this.reload();

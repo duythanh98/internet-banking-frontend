@@ -226,9 +226,21 @@ export const asyncRoutes = [
         meta: {
           title: 'Thêm nhắc nợ'
         }
-      },
+      }
+    ]
+  },
+  {
+    path: '/reminders/:id',
+    component: Layout,
+    hidden: true,
+    meta: {
+      title: 'Nhắc nợ',
+      icon: 'payment',
+      roles: ['customer', 'admin']
+    },
+    children: [
       {
-        path: ':id',
+        path: '',
         component: () => import('@/views/reminders/view'),
         name: 'ViewReminder',
         hidden: true,
