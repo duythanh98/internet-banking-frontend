@@ -64,11 +64,6 @@
         </template>
       </el-table-column>
       <el-table-column label="Ngân hàng" prop="to_bank_name" align="center" header-align="center" sortable />
-      <el-table-column label="Phí" prop="fee" align="right" header-align="center" sortable>
-        <template slot-scope="{row}">
-          <div>{{ row.fee | toThousandFilter }}đ</div>
-        </template>
-      </el-table-column>
       <el-table-column label="Người trả phí" prop="sender_pay_fee" align="center" header-align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.sender_pay_fee === 1 ? "Người gửi" : "Người nhận" }}</div>

@@ -51,7 +51,7 @@ export default {
 
       if (res.isFailed()) {
         console.log(res.error);
-        return this.$notify.error('Có lỗi xảy ra, hãy thử lại sau');
+        return this.$notify.error({ message: 'Có lỗi xảy ra, hãy thử lại sau', position: 'bottom-right' });
       }
 
       this.saved = true;

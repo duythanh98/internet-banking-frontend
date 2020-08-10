@@ -245,7 +245,7 @@ export default {
       const res = await contact.getContact('me', this.contactsListPage, 'internal');
 
       if (res.isFailed() || res.status() !== 200) {
-        return this.$notify.error('Có lỗi xảy ra khi tải danh sách');
+        return this.$notify.error({ message: 'Có lỗi xảy ra khi tải danh sách', position: 'bottom-right' });
       }
 
       this.contactLists = res.result();

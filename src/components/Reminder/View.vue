@@ -200,9 +200,24 @@ export default {
 
       if (res.isFailed()) {
         switch (res.status()) {
-          // case 422: this.$notify.error('Bạn không đủ tiền thực hiện giao dịch này'); break;
-          case 410: this.$notify.error('Hết thời gian nhập mã OTP'); break;
-          default: this.$notify.error('Có lỗi xảy ra, hãy thử lại sau');
+          case 422: {
+            const r = res.result();
+
+            if (r && r.opt_code && Array.isArray(r.opt_code)) {
+              if (r.opt_code.includes('invalid')) {
+                this.$notify.error({ message: 'Mã OTP không đúng', position: 'bottom-right' });
+              }
+            } else if (r && r.amount && Array.isArray(r.amount)) {
+              if (r.amount.includes('max')) {
+                this.$notify.error({ message: 'Bạn không đủ tiền thực hiện giao dịch này', position: 'bottom-right' });
+              }
+            } else {
+              this.$notify.error({ message: 'Có lỗi xảy ra, hãy thử lại sau', position: 'bottom-right' });
+            }
+            break;
+          }
+          case 410: this.$notify.error({ message: 'Hết thời gian nhập mã OTP', position: 'bottom-right' }); break;
+          default: this.$notify.error({ message: 'Có lỗi xảy ra, hãy thử lại sau', position: 'bottom-right' });
         }
 
         this.submitting = false;

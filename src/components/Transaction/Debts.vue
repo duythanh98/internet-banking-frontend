@@ -53,22 +53,18 @@
       @sort-change="handleSortChange"
     >
       <el-table-column label="STK người nhận" prop="to_account" align="right" header-align="center" sortable />
+      <el-table-column label="Tên người nhận" prop="to_name" align="right" header-align="center" sortable>
+        <template slot-scope="{row}">
+          <div>{{ row.receiver ? row.receiver.user.name : row.to_name }}đ</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Số tiền trả" prop="amount" align="right" header-align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.amount | toThousandFilter }}đ</div>
         </template>
       </el-table-column>
-      <el-table-column label="Ngân hàng" prop="bank_name" align="center" header-align="center" sortable />
-      <el-table-column label="Phí" prop="fee" align="right" header-align="center" sortable>
-        <template slot-scope="{row}">
-          <div>{{ row.fee | toThousandFilter }}đ</div>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="Người trả phí" prop="sender_pay_fee" align="center" header-align="center" sortable>
-        <template slot-scope="{row}">
-          <div>{{ row.sender_pay_fee === 1 ? "Người gửi" : "Người nhận" }}</div>
-        </template>
-      </el-table-column> -->
+      <el-table-column label="Ngân hàng" prop="to_bank_name" align="center" header-align="center" sortable />
+      <el-table-column label="Ghi chú" prop="note" align="center" header-align="center" sortable />
       <el-table-column label="Thời gian trả" prop="updated_at" align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.updated_at ? formatTime(row.updated_at) : 'Không biết' }}</div>
