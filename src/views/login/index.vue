@@ -46,6 +46,7 @@
 
       <div style="margin-bottom: 10px">
         <vue-recaptcha
+          ref="recaptcha"
           :sitekey="siteKey"
           :load-recaptcha-script="true"
           @verify="verifyRecaptcha"
@@ -176,15 +177,6 @@ export default {
       });
     },
     async handleLogin() {
-      // await this.$recaptchaLoaded();
-
-      // // Execute reCAPTCHA with action "login".
-      // const token = await this.$recaptcha('login');
-      // console.log(token);
-      // if (!token) {
-      //   return;
-      // }
-
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
@@ -196,6 +188,7 @@ export default {
             })
             .catch((err) => {
               this.$notify.error({ message: err.message, position: 'bottom-right' });
+              this.reset();
             })
             .finally(() => {
               this.loading = false;
@@ -220,6 +213,9 @@ export default {
         this.loginForm.recaptcha = res;
         this.verifiedRecaptcha = true;
       }
+    },
+    reset() {
+      this.$refs.recaptcha.reset();
     }
   }
 };

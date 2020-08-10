@@ -681,6 +681,8 @@ const actions = {
 
     const res = await api.resetPassword(data);
 
+    console.log(res);
+
     if (res.isFailed()) {
       if (res.status() === 401) {
         throw new Error('Phiên đăng nhập hết hạn');
@@ -693,9 +695,9 @@ const actions = {
       if (res.status() === 422) {
         const r = res.result();
 
-        if (r && r.code) {
-          if (r.code === 'invalid') {
-            throw new Error('Mã không hợp lệ');
+        if (r && r.otp) {
+          if (r.otp === 'invalid') {
+            throw new Error('Mã otp không đúng');
           }
         }
       }
