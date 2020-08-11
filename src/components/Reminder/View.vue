@@ -37,7 +37,7 @@
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
-            <el-form-item prop="note" label="Lời nhắc">
+            <el-form-item prop="note" label="Ghi chú">
               <el-input :value="form.note" readonly />
             </el-form-item>
           </el-col>
@@ -180,23 +180,14 @@ export default {
       this.selectedDebt = debt;
       this.debtPaymentShowing = true;
     },
-    async payDebt() {
+    async goToOTPStep() {
+      this.stepProcessing = true;
+
       try {
         const result = await this.$store.dispatch('user/payDebt', { reminderId: this.selectedDebt.id });
 
         console.log(result);
         this.transfer = result;
-      } catch (err) {
-        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
-      } finally {
-        this.stepProcessing = false;
-      }
-    },
-    async goToOTPStep() {
-      this.stepProcessing = true;
-
-      try {
-        await this.payDebt();
         this.step = 1;
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });

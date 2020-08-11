@@ -302,23 +302,14 @@ export default {
       this.selectedDebt = debt;
       this.debtPaymentShowing = true;
     },
-    async payDebt() {
+    async goToOTPStep() {
+      this.stepProcessing = true;
+
       try {
         const result = await this.$store.dispatch('user/payDebt', { reminderId: this.selectedDebt.id });
 
         console.log(result);
         this.transfer = result;
-      } catch (err) {
-        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
-      } finally {
-        this.stepProcessing = false;
-      }
-    },
-    async goToOTPStep() {
-      this.stepProcessing = true;
-
-      try {
-        await this.payDebt();
         this.step = 1;
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });

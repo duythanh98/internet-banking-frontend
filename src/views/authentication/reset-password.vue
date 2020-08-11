@@ -48,10 +48,10 @@
 
       <el-row :gutter="20">
         <el-col :xs="24" :md="12">
-          <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submit">Tiếp theo</el-button>
+          <el-button :loading="submitting" :disabled="invalidForm || submitting" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submit">Tiếp theo</el-button>
         </el-col>
         <el-col :xs="24" :md="12">
-          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="redirectToLogin">Quay lại</el-button>
+          <el-button :disabled="submitting" type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="redirectToLogin">Quay lại</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -109,10 +109,10 @@
 
       <el-row :gutter="20">
         <el-col :xs="24" :md="12">
-          <el-button :loading="submitting" :disabled="invalidResettingForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="resetPassword">Đặt lại</el-button>
+          <el-button :loading="submitting" :disabled="invalidResettingForm || submitting" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="resetPassword">Đặt lại</el-button>
         </el-col>
         <el-col :xs="24" :md="12">
-          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="redirectToLogin">Quay lại</el-button>
+          <el-button :disabled="submitting" type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="redirectToLogin">Quay lại</el-button>
         </el-col>
       </el-row>
     </el-form>
