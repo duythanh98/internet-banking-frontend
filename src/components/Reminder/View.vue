@@ -2,10 +2,24 @@
   <div class="app-container">
     <div class="filter-container">
       <el-form ref="form" :model="form" status-icon label-position="top" @submit.native.prevent>
-        <el-row :gutter="20">
+        <el-row v-if="reminding" :gutter="20">
+          <el-col :md="12" :xs="24">
+            <el-form-item prop="account_number" label="Số tài khoản người nợ">
+              <el-input :value="form.receiver ? form.receiver.account_number : ''" readonly />
+            </el-form-item>
+          </el-col>
+          <el-col :md="12" :xs="24">
+            <el-form-item prop="account_name" label="Tên người nợ">
+              <el-input :value="form.receiver ? form.receiver.user.name : ''" readonly>
+                <el-button v-if="accountLoading" slot="prepend" icon="el-icon-loading" />
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-else :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="account_number" label="Số tài khoản người nhắc nợ">
-              <el-input v-model.trim="form.account_number" readonly />
+              <el-input :value="form.sender ? form.sender.account.account_number : ''" readonly />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
@@ -76,6 +90,12 @@ export default {
     'step-1': step_1,
     'step-2': step_2
   },
+  props: {
+    reminding: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       form: {
@@ -121,7 +141,6 @@ export default {
         console.log(result);
 
         this.form = Object.assign(this.form, result);
-        // this.onAccountChange(result.account_id);
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       }

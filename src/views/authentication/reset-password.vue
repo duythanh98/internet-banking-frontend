@@ -14,8 +14,8 @@
             placeholder="Tên đăng nhập hoặc email"
             maxlength="150"
             tabindex="1"
-            focus
             @input="inputFormText"
+            @keyup.enter.native="submit"
           />
         </el-form-item>
       </el-row>
@@ -29,8 +29,6 @@
               class="filter-item"
               placeholder="Tên đăng nhập"
               maxlength="32"
-              tabindex="1"
-              focus
             />
           </el-form-item>
         </el-col>
@@ -43,7 +41,6 @@
               class="filter-item"
               placeholder="Email"
               maxlength="150"
-              tabindex="2"
             />
           </el-form-item>
         </el-col>
@@ -51,10 +48,10 @@
 
       <el-row :gutter="20">
         <el-col :xs="24" :md="12">
-          <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submit">Đặt lại</el-button>
+          <el-button :loading="submitting" :disabled="invalidForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="submit">Tiếp theo</el-button>
         </el-col>
         <el-col :xs="24" :md="12">
-          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="$router.push({path: '/login'})">Quay lại</el-button>
+          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="redirectToLogin">Quay lại</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -64,52 +61,60 @@
         <h3 class="title">Đặt lại mật khẩu</h3>
       </div>
 
-      <template v-if="!havingValidOtp">
-        <p style="color: #eee">Nhập OTP ứng với mã giao dịch: <strong>{{ resettingForm.code || 'Không có' }}</strong></p>
+      <el-row>
+        <template v-if="!havingValidOtp">
+          <p style="color: #eee">Nhập OTP ứng với mã giao dịch: <strong>{{ resettingForm.code || 'Không có' }}</strong></p>
+
+          <el-col :xs="24">
+            <el-form-item prop="otp">
+              <el-input
+                ref="otpInput"
+                v-model="resettingForm.otp"
+                class="filter-item"
+                placeholder="Nhập OTP"
+                maxlength="6"
+                tabindex="1"
+              />
+            </el-form-item>
+          </el-col>
+        </template>
+
+        <p style="color: #eee">Nhập mật khẩu mới:</p>
         <el-col :xs="24">
-          <el-form-item prop="otp">
+          <el-form-item prop="password">
             <el-input
-              v-model="resettingForm.otp"
+              v-model="resettingForm.password"
               class="filter-item"
-              placeholder="Nhập OTP"
-              maxlength="6"
-              tabindex="1"
-              focus
+              type="password"
+              placeholder="Mật khẩu"
+              maxlength="16"
+              tabindex="2"
             />
           </el-form-item>
         </el-col>
-      </template>
 
-      <p style="color: #eee">Nhập mật khẩu mới:</p>
-      <el-col :xs="24">
-        <el-form-item prop="password">
-          <el-input
-            v-model="resettingForm.password"
-            class="filter-item"
-            type="password"
-            placeholder="Mật khẩu"
-            maxlength="16"
-            tabindex="1"
-            focus
-          />
-        </el-form-item>
-      </el-col>
+        <el-col :xs="24">
+          <el-form-item prop="repassword">
+            <el-input
+              v-model="resettingForm.repassword"
+              class="filter-item"
+              type="password"
+              placeholder="Nhập lại mật khẩu"
+              maxlength="16"
+              tabindex="3"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
 
-      <el-col :xs="24">
-        <el-form-item prop="repassword">
-          <el-input
-            v-model="resettingForm.repassword"
-            class="filter-item"
-            type="password"
-            placeholder="Nhập lại mật khẩu"
-            maxlength="16"
-            tabindex="1"
-            focus
-          />
-        </el-form-item>
-      </el-col>
-
-      <el-button :loading="submitting" :disabled="invalidResettingForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="resetPassword">Đặt lại</el-button>
+      <el-row :gutter="20">
+        <el-col :xs="24" :md="12">
+          <el-button :loading="submitting" :disabled="invalidResettingForm" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="resetPassword">Đặt lại</el-button>
+        </el-col>
+        <el-col :xs="24" :md="12">
+          <el-button type="danger" style="width:100%;margin-bottom:30px;" @click.native.prevent="redirectToLogin">Quay lại</el-button>
+        </el-col>
+      </el-row>
     </el-form>
   </div>
 </template>
@@ -208,6 +213,21 @@ export default {
       return Object.values(this.resettingValidationResult).some(v => v === false);
     }
   },
+  watch: {
+    step(value) {
+      this.$nextTick(() => {
+        if (value === 1 && this.$refs.formText) {
+          this.$refs.formText.focus();
+        } else if (value === 2) {
+          if (this.$refs.otpInput) {
+            this.$refs.otpInput.focus();
+          } else if (this.$refs.passwordInput) {
+            this.$refs.passwordInput.focus();
+          }
+        }
+      });
+    }
+  },
   created() {
     this.step = 1;
     const { code, otp } = this.$route.query;
@@ -217,6 +237,11 @@ export default {
       this.resettingForm.otp = otp;
       this.resettingValidationResult.otp = true;
       this.havingValidOtp = true;
+    }
+  },
+  mounted() {
+    if (this.step === 1 && this.$refs.formText) {
+      this.$refs.formText.focus();
     }
   },
   methods: {
@@ -274,6 +299,10 @@ export default {
     inputFormText(value) {
       this.form.username = value;
       this.form.email = value;
+    },
+    redirectToLogin() {
+      this.$router.push({ path: '/login' });
+      this.step = 1;
     }
   }
 };

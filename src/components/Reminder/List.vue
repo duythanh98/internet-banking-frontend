@@ -24,7 +24,7 @@
       </el-col>
       <el-col style="text-align: right">
         <el-button
-          v-if="reminding"
+          v-if="reminding && isCurrentCustomer"
           v-waves
           class="filter-item"
           style="margin-left: 10px;"
@@ -81,11 +81,10 @@
             @click="payingDebt(row)"
           ><svg-icon icon-class="payment" /></el-button>
           <el-button
-            v-if="!reminding"
             type="primary"
             size="small"
             style="margin: 0 5px"
-            @click="$router.push({name: 'ViewReminder', params: {id: row.id}})"
+            @click="$router.push({name: 'ViewReminder', params: {id: row.id, reminding: +id === +row.from_id}})"
           ><svg-icon icon-class="eye-open" /></el-button>
           <el-button
             v-if="row.status === 'created' && isCurrentCustomer"

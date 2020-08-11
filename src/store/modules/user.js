@@ -689,7 +689,7 @@ const actions = {
       }
 
       if (res.status() === 410) {
-        throw new Error('Đường dẫn này đã hết hạn');
+        throw new Error('Đường dẫn này không tồn tại hoặc đã hết hạn');
       }
 
       if (res.status() === 422) {
@@ -703,6 +703,10 @@ const actions = {
       }
 
       throw new Error('Có lỗi xảy ra, hãy thử lại sau');
+    }
+
+    if (res.status() === 204) {
+      throw new Error('Đường dẫn này không tồn tại hoặc đã hết hạn');
     }
 
     const result = res.result();
