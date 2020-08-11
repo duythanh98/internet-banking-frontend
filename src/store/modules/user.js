@@ -706,7 +706,10 @@ const actions = {
     }
 
     if (res.status() === 204) {
-      throw new Error('Đường dẫn này không tồn tại hoặc đã hết hạn');
+      if (data.isFromUrl) {
+        throw new Error('Đường dẫn này không tồn tại hoặc đã hết hạn');
+      }
+      throw new Error('Mã otp không đúng');
     }
 
     const result = res.result();

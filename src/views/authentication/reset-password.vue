@@ -275,7 +275,8 @@ export default {
     async resetPassword() {
       this.submitting = true;
       try {
-        await this.$store.dispatch('user/resetPassword', this.resettingForm);
+        await this.$store.dispatch('user/resetPassword',
+          { ...this.resettingForm, isFromUrl: this.$route.params.code && this.$route.params.otp });
         this.$notify.success({ message: 'Đặt lại mật khẩu thành công', position: 'bottom-right' });
         this.reset('resettingForm');
         this.resettingValidationResult.otp = true;
