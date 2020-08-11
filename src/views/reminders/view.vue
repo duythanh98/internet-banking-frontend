@@ -1,5 +1,5 @@
 <template>
-  <view-reminder :reminding="reminding" />
+  <view-reminder :user-id="userId" />
 </template>
 
 <script>
@@ -11,8 +11,11 @@ export default {
   },
   data() {
     return {
-      reminding: !!this.$route.params.reminding || false
+      userId: this.$route.params.userId || ''
     };
+  },
+  created() {
+    console.log(this.userId);
   }
 };
 </script>

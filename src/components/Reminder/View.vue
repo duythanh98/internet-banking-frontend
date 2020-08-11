@@ -1,64 +1,44 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form ref="form" :model="form" status-icon label-position="top" @submit.native.prevent>
-        <el-row v-if="reminding" :gutter="20">
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="account_number" label="Số tài khoản người nợ">
-              <el-input :value="form.receiver ? form.receiver.account_number : ''" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="account_name" label="Tên người nợ">
-              <el-input :value="form.receiver ? form.receiver.user.name : ''" readonly>
-                <el-button v-if="accountLoading" slot="prepend" icon="el-icon-loading" />
-              </el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row v-else :gutter="20">
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="account_number" label="Số tài khoản người nhắc nợ">
-              <el-input :value="form.sender ? form.sender.account.account_number : ''" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="account_name" label="Tên người nhắc nợ">
-              <el-input :value="form.sender ? form.sender.name : ''" readonly>
-                <el-button v-if="accountLoading" slot="prepend" icon="el-icon-loading" />
-              </el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="amount" label="Số tiền nợ">
-              <el-input :value="formatMoney(form.amount) + 'đ'" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="note" label="Ghi chú">
-              <el-input :value="form.note" readonly />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row :gutter="20">
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="amount" label="Ngày nhắc">
-              <el-input :value="formatDate(form.created_at)" readonly />
-            </el-form-item>
-          </el-col>
-          <el-col :md="12" :xs="24">
-            <el-form-item prop="note" label="Trạng thái">
-              <el-input :value="status[form.status] || ''" readonly />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <div v-if="isCurrentCustomer" style="text-align: center; margin-top: 20px">
-          <el-button v-if="form.status === 'created'" :disabled="submitting" :loading="submitting" type="primary" @click="payingDebt(form)">Thanh toán</el-button>
-          <el-button submitting type="danger" @click="$router.push({name: 'ReminderList'})">Quay lại</el-button>
-        </div>
-      </el-form>
+      <template v-if="hasCustomerRole">
+        <p v-if="form.sender && currentUserId === form.sender.id">Bạn đã gửi nhắc nợ lúc {{ formatTime(form.created_at) }}</p>
+        <p v-else-if="form.receiver && currentUserId === form.receiver.user.id">Bạn đã nhận nhắc nợ lúc {{ formatTime(form.created_at) }}</p>
+      </template>
+
+      <table style="width:100%">
+        <tr>
+          <th>Số tài khoản:</th>
+          <td>{{ form.sender ? form.sender.account.account_number : '' }}</td>
+        </tr>
+        <tr>
+          <th>Họ tên:</th>
+          <td>{{ form.sender ? form.sender.name : '' }}</td>
+        </tr>
+        <tr>
+          <th>Số tiền nợ:</th>
+          <td>{{ formatMoney(form.amount) + 'đ' }}</td>
+        </tr>
+        <tr>
+          <th>Ghi chú:</th>
+          <td>{{ form.note }}</td>
+        </tr>
+        <tr>
+          <th>Trạng thái:</th>
+          <td><el-tag v-if="status[form.status]" :type="status[form.status].type || 'primary'">{{ status[form.status].text || '' }}</el-tag></td>
+        </tr>
+        <tr v-if="!hasCustomerRole">
+          <th v-if="form.sender && +userId === form.sender.id">Thời gian:</th>
+          <th v-else-if="form.receiver && +userId === form.receiver.user.id">Thời gian nhận:</th>
+          <th v-else>Thời gian:</th>
+          <td>{{ formatTime(form.created_at) }}</td>
+        </tr>
+      </table>
+
+      <div v-if="hasCustomerRole" style="text-align: center; margin-top: 20px">
+        <el-button v-if="form.status === 'created'" :disabled="submitting" :loading="submitting" type="primary" @click="payingDebt(form)">Thanh toán</el-button>
+        <el-button submitting type="danger" @click="$router.push({name: 'ReminderList'})">Quay lại</el-button>
+      </div>
     </div>
 
     <el-dialog title="Thanh toán nợ" :visible.sync="debtPaymentShowing" width="60%">
@@ -91,9 +71,9 @@ export default {
     'step-2': step_2
   },
   props: {
-    reminding: {
-      type: Boolean,
-      default: false
+    userId: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -119,20 +99,27 @@ export default {
       debtPaymentShowing: false,
       id: this.$route.params.id || 0,
       status: {
-        paid: 'Đã trả',
-        created: 'Đã tạo',
-        cancel: 'Đã huỷ'
+        paid: { type: 'success', text: 'Đã trả' },
+        created: { type: 'primary', text: 'Đã tạo' },
+        cancel: { type: 'danger', text: 'Đã huỷ' }
       }
     };
   },
   computed: {
-    isCurrentCustomer() {
+    hasCustomerRole() {
       const roles = [...this.$store.getters.roles];
       return roles.includes('customer');
+    },
+    currentUserId() {
+      return +this.$store.getters.userInfo.id || 0;
+    },
+    isCurrentUser() {
+      return this.userId === 'me' || +this.userId === this.currentUserId;
     }
   },
   created() {
     this.reload();
+    console.log(this.$store.getters.userInfo);
   },
   methods: {
     async reload() {
@@ -256,12 +243,36 @@ export default {
     formatMoney(amount) {
       return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     },
-    formatDate(time) {
-      return moment(time).format('DD/MM/YYYY');
+    formatTime(time) {
+      return moment(time).format('HH:mm:SS, DD/MM/YYYY');
     }
   }
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+table {
+  width: 100%;
+  font-size: 14px;
+  color: #606266;
+  background-color: #fff;
+  border-collapse: collapse;
+  border: 1px solid #dfe6ec;
+
+  th {
+    width: 40%;
+    text-align: left;
+    padding: 10px 20px;
+    border-collapse: collapse;
+    border: 1px solid #dfe6ec;
+  }
+
+  td {
+    width: 60%;
+    text-align: left;
+    padding: 10px 20px;
+    border-collapse: collapse;
+    border: 1px solid #dfe6ec;
+  }
+}
 </style>
