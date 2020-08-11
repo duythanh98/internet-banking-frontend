@@ -24,6 +24,7 @@
       </el-col>
       <el-col style="text-align: right">
         <el-button
+          v-if="isCurrentCustomer"
           v-waves
           class="filter-item"
           style="margin-left: 10px;"
@@ -59,11 +60,11 @@
         <template slot-scope="{row}">
           <el-button
             type="primary"
-            icon="el-icon-edit"
             size="small"
             @click="$router.push({name: 'EditContact', params: {id: row.id}})"
-          />
+          ><svg-icon :icon-class="isCurrentCustomer ? 'edit' : 'eye-open'" /></el-button>
           <el-popconfirm
+            v-if="isCurrentCustomer"
             title="Bạn có muốn xoá người nhận này không?"
             confirm-button-text="Đồng ý"
             cancel-button-text="Không"
@@ -113,8 +114,15 @@ export default {
           { min: 1, max: 32, message: 'Từ khoá từ 1 tới 32 kí tự', trigger: 'change' }
         ]
       },
-      sorts: []
+      sorts: [],
+      id: this.$route.params.id || 'me'
     };
+  },
+  computed: {
+    isCurrentCustomer() {
+      const roles = [...this.$store.getters.roles];
+      return roles.includes('customer');
+    }
   },
   created() {
     this.reload();
@@ -123,7 +131,7 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const result = await this.$store.dispatch('user/getContacts', { id: 'me' });
+        const result = await this.$store.dispatch('user/getContacts', { id: this.id });
 
         this.pagination = result;
         this.loading = false;

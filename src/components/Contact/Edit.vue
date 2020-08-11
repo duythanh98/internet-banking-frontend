@@ -19,7 +19,7 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="name" label="Tên gợi nhớ">
-              <el-input v-model="form.name" maxlength="150" />
+              <el-input v-model="form.name" :readonly="!isCurrentCustomer" maxlength="150" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
@@ -28,7 +28,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div v-if="hasChanged" style="text-align: center; margin-top: 20px">
+        <div v-if="hasChanged && isCurrentCustomer" style="text-align: center; margin-top: 20px">
           <el-button :disabled="formInvalid || submitting" :loading="submitting" type="primary" @click="save">Lưu lại</el-button>
           <el-button :disabled="formInvalid || submitting" type="danger" @click="reset">Đặt lại</el-button>
         </div>
@@ -110,6 +110,10 @@ export default {
     },
     hasChanged() {
       return Object.keys(this.originalData).some(k => this.originalData[k] !== this.form[k]);
+    },
+    isCurrentCustomer() {
+      const roles = [...this.$store.getters.roles];
+      return roles.includes('customer');
     }
   },
   created() {

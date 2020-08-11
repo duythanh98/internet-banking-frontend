@@ -47,12 +47,18 @@
           </div>
         </el-tab-pane>
 
+        <el-tab-pane name="contact">
+          <span slot="label"><svg-icon icon-class="info" /> {{ 'Liên hệ' }}</span>
+          <contact ref="contact" @reload-completed="contactReloadCompleted" />
+        </el-tab-pane>
+
       </template>
     </el-tabs></div>
 </template>
 
 <script>
 import EditUser from '@/components/User/Edit';
+import Contact from '@/components/Contact/List';
 import Reminder from '@/components/Reminder/List';
 import DebtTransaction from '@/components/Transaction/Debts';
 import DepositTransaction from '@/components/Transaction/Deposits';
@@ -61,13 +67,14 @@ import TransferTransaction from '@/components/Transaction/Transfers';
 export default {
   name: 'ViewUser',
   components: {
-    EditUser, Reminder, TransferTransaction, DebtTransaction, DepositTransaction
+    EditUser, Contact, Reminder, TransferTransaction, DebtTransaction, DepositTransaction
   },
 
   data() {
     return {
       transfer: 0,
       debt: 0,
+      contact: 0,
       deposit: 0,
       reminder: 0,
       unpaid: 0,
@@ -92,13 +99,10 @@ export default {
   async mounted() {
     await this.$refs.edit.load();
     const permission = this.$refs.edit.$data.form.permission;
-    console.log(permission, this.isAuthorized);
+
     if (permission && permission === 'customer') {
       this.isCustomer = true;
     }
-    // this.$refs.transfer.load();
-    // this.$refs.debt.load();
-    // this.$refs.deposit.load();
   },
   methods: {
     changeTab() {
@@ -131,6 +135,9 @@ export default {
     },
     unpaidDebtReloadCompleted() {
       this.unpaid = this.$refs.unpaidDebt.$data.pagination.total;
+    },
+    contactReloadCompleted() {
+      this.contact = this.$refs.contact.$data.pagination.total;
     }
   }
 };

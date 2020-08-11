@@ -294,14 +294,26 @@ export const asyncRoutes = [
         meta: {
           title: 'Thêm liên hệ'
         }
-      },
+      }
+    ]
+  },
+  {
+    path: '/contacts/:id',
+    component: Layout,
+    hidden: true,
+    meta: {
+      title: 'Liên hệ',
+      icon: 'contact',
+      roles: ['customer', 'admin']
+    },
+    children: [
       {
-        path: 'edit/:id',
+        path: '',
         component: () => import('@/views/contacts/edit'),
         name: 'EditContact',
         hidden: true,
         meta: {
-          title: 'Chỉnh sửa liên hệ'
+          title: 'Chi tiết liên hệ'
         }
       }
     ]
