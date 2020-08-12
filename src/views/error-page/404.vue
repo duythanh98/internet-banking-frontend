@@ -10,7 +10,7 @@
       <div class="bullshit">
         <div class="bullshit__headline">{{ message }}</div>
         <div class="bullshit__info">Vui lòng kiểm tra lại đường dẫn, hoặc nhấn nút bên dưới để trở về trang Tổng quan.</div>
-        <a href="/dashboard" class="bullshit__return-home">Quay lại</a>
+        <a class="bullshit__return-home" @click="$router.push({name: 'Dashboard'})">Quay lại</a>
       </div>
     </div>
   </div>

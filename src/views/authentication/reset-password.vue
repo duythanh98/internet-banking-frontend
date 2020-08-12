@@ -281,7 +281,6 @@ export default {
         this.reset('resettingForm');
         this.resettingValidationResult.otp = true;
         this.$router.push({ name: 'Dashboard' });
-        this.step = 1;
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {

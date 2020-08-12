@@ -85,6 +85,7 @@
           <el-col :md="24" :xs="24">
             <el-form-item prop="amount" label="Số tiền nạp vào tài khoản">
               <el-input v-model.number="form.amount" max="1000000000" min="1" maxlength="10" />
+              <span class="small">Số tiền bạn nhập: <strong>{{ form.amount | toThousandFilter }}đ</strong></span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -244,7 +245,7 @@ export default {
           { account_number: this.form.account_number, amount: this.form.amount });
         this.reset('form');
 
-        this.$notify.success({ message: 'Nạp tiền thành công thành công', position: 'bottom-right' });
+        this.$notify.success({ message: 'Nạp tiền thành công', position: 'bottom-right' });
         this.reset('form');
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });

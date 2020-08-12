@@ -67,8 +67,9 @@
         </template>
       </el-table-column>
       <el-table-column label="Thao tác" align="center">
-        <template slot-scope="{row}">
+        <template v-if="currentUserPermission <= +row.permission" slot-scope="{row}">
           <el-button
+            v-if="!row.deleted_at"
             type="primary"
             icon="el-icon-edit"
             size="small"
@@ -141,6 +142,17 @@ export default {
         '3': 'Khách hàng'
       }
     };
+  },
+  computed: {
+    currentUserPermission() {
+      const roles = this.$store.getters.roles;
+      if (roles.includes('admin')) {
+        return 1;
+      } else if (roles.includes('employee')) {
+        return 2;
+      }
+      return 3;
+    }
   },
   created() {
     this.reload();

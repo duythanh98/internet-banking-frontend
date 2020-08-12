@@ -82,7 +82,7 @@
         </template>
       </el-table-column>
       <el-table-column label="Nội dung" prop="note" align="left" header-align="center" />
-      <el-table-column label="Thời gian chuyển" prop="created_at" align="center" sortable>
+      <el-table-column label="Thời gian" prop="created_at" align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.created_at ? formatTime(row.created_at) : 'Không biết' }}</div>
         </template>
