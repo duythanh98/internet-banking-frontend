@@ -7,14 +7,26 @@
       </template>
 
       <table style="width:100%">
-        <tr>
-          <th>Số tài khoản:</th>
-          <td>{{ form.sender ? form.sender.account.account_number : '' }}</td>
-        </tr>
-        <tr>
-          <th>Họ tên:</th>
-          <td>{{ form.sender ? form.sender.name : '' }}</td>
-        </tr>
+        <template v-if="!hasCustomerRole || (form.sender && form.sender.id !== currentUserId)">
+          <tr>
+            <th>Số tài khoản người gửi:</th>
+            <td>{{ form.sender ? form.sender.account.account_number : '' }}</td>
+          </tr>
+          <tr>
+            <th>Họ tên người gửi:</th>
+            <td>{{ form.sender ? form.sender.name : '' }}</td>
+          </tr>
+        </template>
+        <template v-if="!hasCustomerRole || (form.receiver && form.receiver.user.id !== currentUserId)">
+          <tr>
+            <th>Số tài khoản người nhận:</th>
+            <td>{{ form.receiver ? form.receiver.account_number : '' }}</td>
+          </tr>
+          <tr>
+            <th>Họ tên người nhận:</th>
+            <td>{{ form.receiver ? form.receiver.user.name : '' }}</td>
+          </tr>
+        </template>
         <tr>
           <th>Số tiền nợ:</th>
           <td>{{ formatMoney(form.amount) + 'đ' }}</td>
@@ -119,7 +131,6 @@ export default {
   },
   created() {
     this.reload();
-    console.log(this.$store.getters.userInfo);
   },
   methods: {
     async reload() {
