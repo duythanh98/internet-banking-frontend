@@ -59,10 +59,17 @@
       <el-table-column label="Thao tác" align="center">
         <template slot-scope="{row}">
           <el-button
+            v-if="isCurrentCustomer"
             type="primary"
             size="small"
             @click="$router.push({name: 'EditContact', params: {id: row.id}})"
-          ><svg-icon :icon-class="isCurrentCustomer ? 'edit' : 'eye-open'" /></el-button>
+          ><svg-icon icon-class="edit" /></el-button>
+          <el-button
+            v-else
+            type="primary"
+            size="small"
+            @click="$router.push({name: 'ViewContact', params: {id: row.id}})"
+          ><svg-icon icon-class="eye-open" /></el-button>
           <el-popconfirm
             v-if="isCurrentCustomer"
             title="Bạn có muốn xoá người nhận này không?"

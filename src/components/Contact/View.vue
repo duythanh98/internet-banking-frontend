@@ -3,7 +3,7 @@
     <div class="filter-container">
       <table style="width:100%">
         <tr>
-          <th>Số tài khoản người nhận:</th>
+          <th>Số tài khoản:</th>
           <td>{{ form.account_number }}</td>
         </tr>
         <tr>
