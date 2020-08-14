@@ -376,7 +376,7 @@ $light_gray:#eee;
     position: relative;
     width: 520px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 120px 35px 0;
     margin: 0 auto;
     overflow: hidden;
   }
@@ -407,7 +407,7 @@ $light_gray:#eee;
     .title {
       font-size: 26px;
       color: $light_gray;
-      margin: 0px auto 40px auto;
+      margin: 0px auto 20px auto;
       text-align: center;
       font-weight: bold;
     }

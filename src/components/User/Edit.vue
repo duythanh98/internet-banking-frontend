@@ -5,12 +5,12 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="name" label="Họ tên">
-              <el-input v-model="form.name" maxlength="150" />
+              <el-input v-model="form.name" :readonly="!hasPermission(form.permission)" maxlength="150" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
             <el-form-item prop="email" label="Email">
-              <el-input v-model="form.email" maxlength="150" />
+              <el-input v-model="form.email" :readonly="!hasPermission(form.permission)" maxlength="150" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -18,7 +18,7 @@
         <el-row :gutter="20">
           <el-col :md="12" :xs="24">
             <el-form-item prop="phone" label="Số điện thoại">
-              <el-input v-model="form.phone" />
+              <el-input v-model="form.phone" :readonly="!hasPermission(form.permission)" />
             </el-form-item>
           </el-col>
           <el-col :md="12" :xs="24">
@@ -35,7 +35,7 @@
           </el-col>
         </el-row>
 
-        <div v-if="hasChanged" style="text-align: center; margin-top: 20px">
+        <div v-if="hasChanged && hasPermission(form.permission)" style="text-align: center; margin-top: 20px">
           <el-button :disabled="formInvalid || submitting" :loading="submitting" type="primary" @click="save">Lưu lại</el-button>
           <el-button :disabled="submitting" type="danger" @click="reset">Đặt lại</el-button>
         </div>
@@ -144,6 +144,15 @@ export default {
     },
     hasChanged() {
       return Object.keys(this.form).some(k => this.form[k] !== this.originalData[k]);
+    },
+    hasPermission() {
+      return (permission) => {
+        const roles = this.$store.getters.roles;
+        if (roles.includes('employee') && permission === 'admin') {
+          return false;
+        }
+        return true;
+      };
     }
   },
   methods: {
