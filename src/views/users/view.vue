@@ -6,27 +6,27 @@
         <edit-user ref="edit" />
       </el-tab-pane>
 
-      <template v-if="isCustomer && isAuthorized">
-        <el-tab-pane name="transaction">
-          <span slot="label"><svg-icon icon-class="info" /> {{ 'Giao dịch' }}</span>
-          <div id="edit-card">
-            <el-tabs v-model="tabs.childrenTab.transaction" type="card" @tab-click="changeTab">
-              <el-tab-pane name="transfer">
-                <span slot="label"><svg-icon icon-class="info" /> {{ `Chuyển khoản (${transfer})` }}</span>
-                <transfer-transaction ref="transfer" @reload-completed="transferReloadCompleted" />
-              </el-tab-pane>
-              <el-tab-pane name="debt">
-                <span slot="label"><svg-icon icon-class="info" /> {{ `Thanh toán nợ (${debt})` }}</span>
-                <debt-transaction ref="debt" @reload-completed="debtReminderReloadCompleted" />
-              </el-tab-pane>
-              <el-tab-pane name="deposit">
-                <span slot="label"><svg-icon icon-class="info" /> {{ `Nhận tiền (${deposit})` }}</span>
-                <deposit-transaction ref="deposit" @reload-completed="depositReloadCompleted" />
-              </el-tab-pane>
-            </el-tabs>
-          </div>
-        </el-tab-pane>
+      <el-tab-pane v-if="isCustomer" name="transaction">
+        <span slot="label"><svg-icon icon-class="info" /> {{ 'Giao dịch' }}</span>
+        <div id="edit-card">
+          <el-tabs v-model="tabs.childrenTab.transaction" type="card" @tab-click="changeTab">
+            <el-tab-pane name="transfer">
+              <span slot="label"><svg-icon icon-class="info" /> {{ `Chuyển khoản (${transfer})` }}</span>
+              <transfer-transaction ref="transfer" @reload-completed="transferReloadCompleted" />
+            </el-tab-pane>
+            <el-tab-pane name="debt">
+              <span slot="label"><svg-icon icon-class="info" /> {{ `Thanh toán nợ (${debt})` }}</span>
+              <debt-transaction ref="debt" @reload-completed="debtReloadCompleted" />
+            </el-tab-pane>
+            <el-tab-pane name="deposit">
+              <span slot="label"><svg-icon icon-class="info" /> {{ `Nhận tiền (${deposit})` }}</span>
+              <deposit-transaction ref="deposit" @reload-completed="depositReloadCompleted" />
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+      </el-tab-pane>
 
+      <template v-if="isCustomer && isAuthorized">
         <el-tab-pane name="reminders">
           <span slot="label"><svg-icon icon-class="info" /> {{ 'Nhắc nợ' }}</span>
           <div id="edit-card">
