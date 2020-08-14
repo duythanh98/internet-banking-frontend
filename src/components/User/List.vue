@@ -162,7 +162,7 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch('user/getUsers',
-          { ...this.pagination, keyword: this.filter.keyword });
+          { pagination: this.pagination, keyword: this.filter.keyword });
 
         this.pagination = result;
         this.loading = false;

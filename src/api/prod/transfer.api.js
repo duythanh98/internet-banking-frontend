@@ -38,9 +38,16 @@ export default class TransferApi extends BaseApi {
     return this.get();
   }
 
+  getTransactions(data) {
+    const { id, from, to, type, pagination, sortBy, orderBy } = data;
+    this.setUrl(`/users/${id}/transactions?page=${pagination.current_page || 1}&limit=${pagination.per_page || 10}&from=${from || ''}&to=${to || ''}${type ? ('&type=' + type) : ''}&sort=${sortBy || 'created_at'}&order=${orderBy || 'desc'}`);
+
+    return this.get();
+  }
+
   getBankTransactions(data) {
-    const { from, to, bankId, current_page, per_page, sortBy, orderBy } = data;
-    this.setUrl(`/transactions/banks${bankId !== '' ? ('/' + bankId) : ''}?from=${from}&to=${to}${bankId >= 0 ? ('&bank_id=' + bankId) : ''}&page=${current_page || 1}&limit=${per_page || 10}&sortBy=${sortBy || 'created_at'}&orderBy=${orderBy || 'desc'}`);
+    const { from, to, bankId, pagination, sortBy, orderBy } = data;
+    this.setUrl(`/transactions/banks${bankId !== '' ? ('/' + bankId) : ''}?from=${from}&to=${to}${bankId >= 0 ? ('&bank_id=' + bankId) : ''}&page=${pagination.current_page || 1}&limit=${pagination.per_page || 10}&sort=${sortBy || 'created_at'}&order=${orderBy || 'desc'}`);
     return this.get();
   }
 }

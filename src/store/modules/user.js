@@ -509,10 +509,10 @@ const actions = {
   },
 
   async getTransactions({ commit, state }, data) {
-    const api = new AccountApi();
+    const api = new TransferApi();
     api.setToken(state.token);
 
-    const res = await api.getTransactions(data.id || 'me', data.pagination, data.type, data.from || '', data.to || '');
+    const res = await api.getTransactions(data);
 
     console.log(res);
 

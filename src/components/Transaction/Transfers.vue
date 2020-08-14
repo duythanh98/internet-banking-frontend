@@ -52,8 +52,8 @@
       style="width: 100%;"
       @sort-change="handleSortChange"
     >
-      <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" sortable />
-      <el-table-column label="Tên người nhận" prop="to_account_name" align="left" header-align="center" sortable>
+      <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" />
+      <el-table-column label="Tên người nhận" prop="to_account_name" align="left" header-align="center">
         <template slot-scope="{row}">
           <div>{{ row.receiver ? row.receiver.user.name : row.to_name }}</div>
         </template>
@@ -63,13 +63,13 @@
           <div>{{ row.amount | toThousandFilter }}đ</div>
         </template>
       </el-table-column>
-      <el-table-column label="Ngân hàng" prop="to_bank_name" align="center" header-align="center" sortable />
-      <el-table-column label="Người trả phí" prop="sender_pay_fee" align="center" header-align="center" sortable>
+      <el-table-column label="Ngân hàng" prop="to_bank_name" align="center" header-align="center" />
+      <el-table-column label="Người trả phí" prop="sender_pay_fee" align="center" header-align="center">
         <template slot-scope="{row}">
           <div>{{ row.sender_pay_fee === 1 ? "Người gửi" : "Người nhận" }}</div>
         </template>
       </el-table-column>
-      <el-table-column label="Nội dung" prop="note" align="left" header-align="center" sortable />
+      <el-table-column label="Nội dung" prop="note" align="left" header-align="center" />
       <el-table-column label="Thời gian chuyển" prop="created_at" align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.created_at ? formatTime(row.created_at) : 'Không biết' }}</div>
@@ -124,7 +124,8 @@ export default {
           { min: 1, max: 32, message: 'Từ khoá từ 1 tới 32 kí tự', trigger: 'change' }
         ]
       },
-      sorts: [],
+      orderBy: 'desc',
+      sortBy: 'created_at',
       id: this.$route.params.id || 'me'
     };
   },
@@ -133,7 +134,8 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch('user/getTransactions',
-          { id: this.id, type: 'transfer', pagination: this.pagination });
+          { id: this.id, type: 'transfer', pagination: this.pagination,
+            sortBy: this.sortBy, orderBy: this.orderBy });
 
         this.pagination = result;
         this.isLoaded = true;
@@ -169,12 +171,11 @@ export default {
     },
     handleSortChange(column) {
       if (column.order) {
-        this.sorts = [[column.prop, column.order.startsWith('asc') ? 'asc' : 'desc']];
-      } else {
-        this.sorts = [];
-      }
+        this.sortBy = column.prop;
+        this.orderBy = column.order.startsWith('asc') ? 'asc' : 'desc';
 
-      this.reload();
+        this.reload();
+      }
     },
     formatTime(time) {
       return moment(time).format('DD/MM/YYYY, HH:mm:SS');

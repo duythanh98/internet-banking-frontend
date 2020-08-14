@@ -74,7 +74,8 @@ export default {
         const to = moment().subtract(30, 'days').toISOString();
 
         const result = await this.$store.dispatch(`user/getTransactions`,
-          { id: 'me', type: 'transfer', from, to, pagination: this.pagination });
+          { id: 'me', type: 'transfer', from, to, pagination: this.pagination,
+            sortBy: this.sortBy, orderBy: this.orderBy });
 
         this.pagination = result;
       } catch (err) {

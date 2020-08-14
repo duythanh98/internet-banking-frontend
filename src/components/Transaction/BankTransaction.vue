@@ -207,7 +207,7 @@ export default {
           to: moment(this.form.to, 'YYYY-MM-DD').toISOString()
         };
         const result = await this.$store.dispatch(`user/getBankTransactions`,
-          { ...submit, ...this.pagination, sortBy: this.sortBy, orderBy: this.orderBy });
+          { ...submit, pagination: this.pagination, sortBy: this.sortBy, orderBy: this.orderBy });
 
         if (result.sum && result.transactions) {
           this.sum = result.sum.reduce((acc, v) => {

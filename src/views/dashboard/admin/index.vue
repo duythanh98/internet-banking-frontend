@@ -70,7 +70,7 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch(`user/getBankTransactions`,
-          { from: '', to: '', bankId: '', ...this.pagination,
+          { from: '', to: '', bankId: '', pagination: this.pagination,
             sortBy: this.sortBy, orderBy: this.orderBy });
 
         if (result.sum && result.transactions) {

@@ -191,6 +191,7 @@ export default {
               this.reset();
             })
             .finally(() => {
+              this.verifiedRecaptcha = false;
               this.loading = false;
             });
         }
