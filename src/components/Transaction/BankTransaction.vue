@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form ref="form" :model="form" :rules="rules" label-position="top" @submit.native.prevent @validate="validated">
         <el-row :gutter="10">
-          <el-col :md="12" :xs="12">
+          <el-col :md="8" :xs="8">
             <el-form-item label="Ngày bắt đầu" prop="from">
               <el-date-picker
                 v-model="form.from"
@@ -15,7 +15,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :md="12" :xs="12">
+          <el-col :md="8" :xs="8">
             <el-form-item label="Ngày kết thúc" prop="to">
               <el-date-picker
                 v-model="form.to"
@@ -30,7 +30,7 @@
         </el-row>
 
         <el-row :gutter="10" style="display: flex; align-items: flex-end">
-          <el-col :md="12" :xs="12">
+          <el-col :md="8" :xs="8">
             <el-form-item label="Ngân hàng" prop="bankId">
               <el-select v-model="form.bankId" style="width: 100%" placeholder="Chọn ngân hàng">
                 <el-option
@@ -43,14 +43,31 @@
             </el-form-item>
           </el-col>
 
-          <el-col :md="12" :xs="12" style="padding-bottom: 22px">
+          <el-col :md="8" :xs="8">
+            <el-form-item label="Loại giao dịch" prop="type">
+              <el-select v-model="form.type" style="width: 100%" placeholder="Chọn loại giao dịch">
+                <el-option
+                  v-for="(title, value) in types"
+                  :key="value"
+                  :label="title"
+                  :value="value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :md="8" :xs="8" style="padding-bottom: 22px">
             <el-button type="primary" style="width: 100%" :disabled="formInvalid || submitting" icon="el-icon-folder-checked" @click="load">Xem danh sách</el-button>
           </el-col>
         </el-row>
       </el-form>
     </div>
 
-    <p v-if="sum >= 0"><strong>Tổng số tiền đã giao dịch: </strong>{{ sum | toThousandFilter }}đ</p>
+    <template v-if="totalMoney >= 0">
+      <p><strong>Tổng số tiền đã giao dịch: </strong>{{ totalMoney | toThousandFilter }}đ</p>
+      <p style="margin-left: 30px">+ <strong>Chuyển tiền:</strong> {{ sum.transfer | toThousandFilter }}đ</p>
+      <p style="margin-left: 30px">+ <strong>Nhận tiền:</strong> {{ sum.deposit | toThousandFilter }}đ</p>
+    </template>
 
     <el-table
       v-if="pagination.total > 0"
@@ -76,6 +93,13 @@
         </template>
       </el-table-column>
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" />
+      <el-table-column label="Loại giao dịch" prop="type" align="right" header-align="center">
+        <template slot-scope="{row}">
+          <el-tag v-if="row.type === 1" type="primary">Chuyển tiền</el-tag>
+          <el-tag v-else-if="row.type === 3" type="warning">Nhận tiền</el-tag>
+          <el-tag v-else type="info">Không biết</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>
         <template slot-scope="{row}">
           <div>{{ row.amount | toThousandFilter }}đ</div>
@@ -128,14 +152,19 @@ export default {
       form: {
         from: '',
         to: '',
-        bankId: ''
+        bankId: '',
+        type: ''
       },
       formValidateResult: {
         from: false,
         to: false,
-        bankId: true
+        bankId: true,
+        type: true
       },
-      sum: -1,
+      sum: {
+        deposit: -1,
+        transfer: -1
+      },
       pagination: {
         data: [],
         total: 0,
@@ -172,12 +201,20 @@ export default {
             trigger: ['blur', 'change']
           }
         ]
+      },
+      types: {
+        '': 'Tất cả',
+        'transfer': 'Chuyển tiền',
+        'deposit': 'Nhận tiền'
       }
     };
   },
   computed: {
     formInvalid() {
       return (Object.values(this.formValidateResult).some(t => t === false));
+    },
+    totalMoney() {
+      return this.sum.deposit + this.sum.transfer;
     }
   },
   created() {
@@ -203,6 +240,7 @@ export default {
       try {
         const submit = {
           bankId: this.form.bankId,
+          type: this.form.type,
           from: moment(this.form.from, 'YYYY-MM-DD').toISOString(),
           to: moment(this.form.to, 'YYYY-MM-DD').toISOString()
         };
@@ -210,12 +248,12 @@ export default {
           { ...submit, pagination: this.pagination, sortBy: this.sortBy, orderBy: this.orderBy });
 
         if (result.sum && result.transactions) {
-          this.sum = result.sum.deposit.reduce((acc, v) => {
+          this.sum.deposit = result.sum.deposit.reduce((acc, v) => {
             return acc + +v.amount;
           }, 0);
-          this.sum = result.sum.transfer.reduce((acc, v) => {
+          this.sum.transfer = result.sum.transfer.reduce((acc, v) => {
             return acc + +v.amount;
-          }, this.sum);
+          }, 0);
           this.pagination = result.transactions;
         } else {
           this.pagination = result;

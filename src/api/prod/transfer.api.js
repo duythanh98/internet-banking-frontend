@@ -46,8 +46,8 @@ export default class TransferApi extends BaseApi {
   }
 
   getBankTransactions(data) {
-    const { from, to, bankId, pagination, sortBy, orderBy } = data;
-    this.setUrl(`/transactions/banks${bankId !== '' ? ('/' + bankId) : ''}?from=${from}&to=${to}${bankId >= 0 ? ('&bank_id=' + bankId) : ''}&page=${pagination.current_page || 1}&limit=${pagination.per_page || 10}&sort=${sortBy || 'created_at'}&order=${orderBy || 'desc'}`);
+    const { from, to, bankId, type, pagination, sortBy, orderBy } = data;
+    this.setUrl(`/transactions/banks${bankId !== '' ? ('/' + bankId) : ''}?from=${from}&to=${to}${bankId >= 0 ? ('&bank_id=' + bankId) : ''}${type !== '' ? ('&type=' + type) : ''}&page=${pagination.current_page || 1}&limit=${pagination.per_page || 10}&sort=${sortBy || 'created_at'}&order=${orderBy || 'desc'}`);
     return this.get();
   }
 }

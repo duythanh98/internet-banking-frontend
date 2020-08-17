@@ -5,7 +5,11 @@
 
     <div class="table-description">
       <h3>Giao dịch mới nhất</h3>
-      <p v-if="sum >= 0"><strong>Tổng số tiền đã giao dịch: </strong>{{ sum | toThousandFilter }}đ</p>
+      <div v-if="totalMoney >= 0">
+        <p><strong>Tổng số tiền đã giao dịch: </strong>{{ totalMoney | toThousandFilter }}đ</p>
+        <p style="margin-left: 30px">+ <strong>Chuyển tiền:</strong> {{ sum.transfer | toThousandFilter }}đ</p>
+        <p style="margin-left: 30px">+ <strong>Nhận tiền:</strong> {{ sum.deposit | toThousandFilter }}đ</p>
+      </div>
     </div>
 
     <el-table
@@ -18,11 +22,26 @@
       style="width: 100%;"
       @sort-change="handleSortChange"
     >
-      <el-table-column label="Người chuyển" prop="from_name" align="left" header-align="center" />
+      <el-table-column label="Tên người chuyển" prop="from_name" align="left" header-align="center">
+        <template slot-scope="{row}">
+          <div>{{ row.sender ? row.sender.user.name : row.from_name }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Ngân hàng chuyển" prop="from_bank_name" align="center" header-align="center" />
       <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" />
-      <el-table-column label="Tên người nhận" prop="receiver.user.name" align="left" header-align="center" />
+      <el-table-column label="Tên người nhận" prop="receiver.user.name" align="left" header-align="center">
+        <template slot-scope="{row}">
+          <div>{{ row.receiver ? row.receiver.user.name : row.to_name }}</div>
+        </template>
+      </el-table-column>
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" />
+      <el-table-column label="Loại giao dịch" prop="type" align="right" header-align="center">
+        <template slot-scope="{row}">
+          <el-tag v-if="row.type === 1" type="primary">Chuyển tiền</el-tag>
+          <el-tag v-else-if="row.type === 3" type="warning">Nhận tiền</el-tag>
+          <el-tag v-else type="info">Không biết</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center">
         <template slot-scope="{row}">
           <div>{{ row.amount | toThousandFilter }}đ</div>
@@ -59,8 +78,16 @@ export default {
       orderBy: 'desc',
       sortBy: 'created_at',
       loading: false,
-      sum: -1
+      sum: {
+        deposit: -1,
+        transfer: -1
+      }
     };
+  },
+  computed: {
+    totalMoney() {
+      return this.sum.deposit + this.sum.transfer;
+    }
   },
   created() {
     this.reload();
@@ -74,12 +101,12 @@ export default {
             sortBy: this.sortBy, orderBy: this.orderBy });
 
         if (result.sum && result.transactions) {
-          this.sum = result.sum.deposit.reduce((acc, v) => {
+          this.sum.deposit = result.sum.deposit.reduce((acc, v) => {
             return acc + +v.amount;
           }, 0);
-          this.sum = result.sum.transfer.reduce((acc, v) => {
+          this.sum.transfer = result.sum.transfer.reduce((acc, v) => {
             return acc + +v.amount;
-          }, this.sum);
+          }, 0);
           this.pagination = result.transactions;
         } else {
           this.pagination = result;
