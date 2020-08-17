@@ -70,8 +70,8 @@ export default {
     async reload() {
       this.loading = true;
       try {
-        const from = moment().toISOString();
-        const to = moment().subtract(30, 'days').toISOString();
+        const to = moment().toISOString();
+        const from = moment().subtract(30, 'days').toISOString();
 
         const result = await this.$store.dispatch(`user/getTransactions`,
           { id: 'me', type: 'transfer', from, to, pagination: this.pagination,

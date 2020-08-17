@@ -1,28 +1,10 @@
 <template>
   <div class="app-container">
     <el-row class="filter-container" type="flex" justify="space-between">
-      <el-col>
-        <!-- <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
-          <el-form-item prop="keyword">
-            <el-input
-              v-model="filter.keyword"
-              class="filter-item"
-              placeholder="Tìm kiếm"
-              style="width: 200px;"
-              @keyup.enter.native="handleFilter"
-            />
-            <el-button
-              v-waves
-              class="filter-item"
-              style="margin-left: 10px;"
-              type="primary"
-              icon="el-icon-search"
-              @click="handleFilter"
-            >Tìm kiếm</el-button>
-          </el-form-item>
-        </el-form> -->
+      <el-col :xs="16" :sm="16">
+        <date-filter @transaction-load="loadTransactions" />
       </el-col>
-      <el-col style="text-align: right">
+      <el-col :xs="8" :sm="8" style="text-align: right">
         <el-button
           v-if="reminding"
           v-waves
@@ -89,9 +71,11 @@
 import waves from '@/directive/waves';
 import permission from '@/directive/permission';
 import moment from 'moment';
+import DateFilter from './DateFilter';
 
 export default {
   directives: { waves, permission },
+  components: { DateFilter },
   props: {
     reminding: {
       type: Boolean,
@@ -121,7 +105,9 @@ export default {
       },
       orderBy: 'desc',
       sortBy: 'created_at',
-      id: this.$route.params.id || 'me'
+      id: this.$route.params.id || 'me',
+      to: moment().toISOString(),
+      from: moment().subtract(30, 'days').toISOString()
     };
   },
   methods: {
@@ -130,7 +116,7 @@ export default {
       try {
         const result = await this.$store.dispatch('user/getTransactions',
           { id: this.id, type: 'deposit', pagination: this.pagination,
-            sortBy: this.sortBy, orderBy: this.orderBy });
+            sortBy: this.sortBy, orderBy: this.orderBy, from: this.from, to: this.to });
 
         this.pagination = result;
         this.isLoaded = true;
@@ -141,6 +127,13 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    loadTransactions(data) {
+      if (data) {
+        this.from = data.from;
+        this.to = data.to;
+      }
+      this.reload();
     },
     load() {
       if (!this.isLoaded) {
