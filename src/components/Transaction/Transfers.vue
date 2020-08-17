@@ -1,28 +1,6 @@
 <template>
   <div class="app-container">
-    <el-row class="filter-container" type="flex" justify="space-between">
-      <el-col :xs="16" :sm="16">
-        <date-filter @transaction-load="loadTransactions" />
-      </el-col>
-      <el-col :xs="8" :sm="8" style="text-align: right">
-        <el-button
-          v-if="reminding"
-          v-waves
-          class="filter-item"
-          style="margin-left: 10px;"
-          type="success"
-          icon="el-icon-circle-plus"
-          @click="$router.push({name: 'AddReminder'})"
-        >Thêm mới</el-button>
-        <el-button
-          class="filter-item"
-          style="margin-left: 10px;"
-          type="primary"
-          icon="el-icon-refresh"
-          @click="reload"
-        >Tải lại</el-button>
-      </el-col>
-    </el-row>
+    <date-filter style="margin-bottom: 20px" @transaction-load="loadTransactions" />
 
     <el-table
       v-loading="loading"

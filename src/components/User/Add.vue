@@ -37,18 +37,11 @@
               <el-input v-model="form.phone" />
             </el-form-item>
           </el-col>
-          <el-col :md="12" :xs="24">
-            <el-form-item v-permission="['admin']" prop="permission" label="Quyền">
-              <el-select v-model="form.permission" placeholder="Chọn quyền" style="width: 100%">
-                <el-option
-                  v-for="(title, value) in permissions"
-                  :key="value"
-                  :label="title"
-                  :value="value"
-                />
-              </el-select>
+          <!-- <el-col :md="12" :xs="24">
+            <el-form-item prop="permission" label="Quyền">
+              <el-input :value="permissions[permission]" readonly />
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
 
         <div style="text-align: center; margin-top: 20px">
@@ -64,7 +57,6 @@ import permission from '@/directive/permission';
 
 export default {
   directives: { permission },
-
   data() {
     const uniqueUsername = (rule, value, cb) => {
       if (value && this.duplicatedUsername.indexOf(value) >= 0) {
@@ -190,7 +182,8 @@ export default {
         'admin': 'Quản trị viên',
         'employee': 'Giao dịch viên',
         'customer': 'Khách hàng'
-      }
+      },
+      permission: this.$route.meta.permission || 'customer'
     };
   },
   computed: {
@@ -201,12 +194,14 @@ export default {
       return Object.keys(this.form).some(k => this.form[k] !== '');
     }
   },
+  created() {
+    this.form.permission = this.permission || 'customer';
+  },
   methods: {
     async save() {
       this.submitting = true;
 
       try {
-        // eslint-disable-next-line no-unused-vars
         await this.$store.dispatch('user/createNewUser', this.form);
         this.reset('form');
 

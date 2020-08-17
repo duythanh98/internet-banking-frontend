@@ -21,18 +21,11 @@
               <el-input v-model="form.phone" :readonly="!hasPermission(form.permission)" />
             </el-form-item>
           </el-col>
-          <el-col :md="12" :xs="24">
+          <!-- <el-col :md="12" :xs="24">
             <el-form-item v-permission="['admin']" prop="permission" label="Quyền">
-              <el-select v-model="form.permission" placeholder="Chọn quyền" style="width: 100%">
-                <el-option
-                  v-for="(title, value) in permissions"
-                  :key="value"
-                  :label="title"
-                  :value="value"
-                />
-              </el-select>
+              <el-input :value="permissions[form.permission]" readonly />
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
 
         <div v-if="hasChanged && hasPermission(form.permission)" style="text-align: center; margin-top: 20px">

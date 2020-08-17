@@ -23,13 +23,13 @@
       <el-table-column label="STK người nhận" prop="to_account_number" align="right" header-align="center" />
       <el-table-column label="Tên người nhận" prop="receiver.user.name" align="left" header-align="center" />
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" />
-      <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>
+      <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center">
         <template slot-scope="{row}">
           <div>{{ row.amount | toThousandFilter }}đ</div>
         </template>
       </el-table-column>
       <el-table-column label="Nội dung" prop="note" align="left" header-align="center" />
-      <el-table-column label="Thời gian" prop="created_at" align="center" sortable>
+      <el-table-column label="Thời gian" prop="created_at" align="center">
         <template slot-scope="{row}">
           <div>{{ row.created_at ? formatTime(row.created_at) : 'Không biết' }}</div>
         </template>

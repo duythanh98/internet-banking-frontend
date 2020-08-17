@@ -23,14 +23,37 @@
         </el-form>
       </el-col>
       <el-col style="text-align: right">
-        <el-button
-          v-waves
-          class="filter-item"
-          style="margin-left: 10px;"
-          type="success"
-          icon="el-icon-circle-plus"
-          @click="$router.push({name: 'AddUser'})"
-        >Thêm mới</el-button>
+        <template>
+          <el-button
+            v-if="permissions.includes('admin')"
+            v-waves
+            class="filter-item"
+            style="margin-left: 10px;"
+            type="success"
+            icon="el-icon-circle-plus"
+            @click="$router.push({name: 'AddAdmin'})"
+          >Thêm quản trị viên</el-button>
+
+          <el-button
+            v-else-if="permissions.includes('employee')"
+            v-waves
+            class="filter-item"
+            style="margin-left: 10px;"
+            type="success"
+            icon="el-icon-circle-plus"
+            @click="$router.push({name: 'AddEmployee'})"
+          >Thêm nhân viên</el-button>
+
+          <el-button
+            v-else
+            v-waves
+            class="filter-item"
+            style="margin-left: 10px;"
+            type="success"
+            icon="el-icon-circle-plus"
+            @click="$router.push({name: 'AddCustomer'})"
+          >Thêm khách hàng</el-button>
+        </template>
         <el-button
           class="filter-item"
           style="margin-left: 10px;"
@@ -63,7 +86,7 @@
       </el-table-column>
       <el-table-column label="Quyền" prop="permission" align="center" header-align="center" sortable>
         <template slot-scope="{row}">
-          <div>{{ row.permission ? permissions[row.permission] : 'Không biết' }}</div>
+          <div>{{ row.permission ? permissionTypes[row.permission] : 'Không biết' }}</div>
         </template>
       </el-table-column>
       <el-table-column label="Thao tác" align="center">
@@ -116,6 +139,14 @@ import permission from '@/directive/permission';
 
 export default {
   directives: { waves, permission },
+  props: {
+    permissions: {
+      type: Array,
+      default() {
+        return [];
+      }
+    }
+  },
   data() {
     return {
       isLoaded: false,
@@ -136,7 +167,7 @@ export default {
         ]
       },
       sorts: [],
-      permissions: {
+      permissionTypes: {
         '1': 'Quản trị viên',
         '2': 'Giao dịch viên',
         '3': 'Khách hàng'
@@ -162,13 +193,14 @@ export default {
       this.loading = true;
       try {
         const result = await this.$store.dispatch('user/getUsers',
-          { ...this.pagination, keyword: this.filter.keyword });
+          { ...this.pagination, keyword: this.filter.keyword,
+            permission: this.permissions.length > 0 ? this.permissions.join(',') : '' });
 
         this.pagination = result;
         this.loading = false;
         this.isLoaded = true;
 
-        this.$emit('reload-completed');
+        this.$emit(this.permissions[0] + '-reload-completed');
       } catch (err) {
         this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
       } finally {

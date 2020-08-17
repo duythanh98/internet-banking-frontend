@@ -146,12 +146,32 @@ export const asyncRoutes = [
         }
       },
       {
-        path: 'new',
-        name: 'AddUser',
+        path: 'admin/new',
+        name: 'AddAdmin',
         component: () => import('@/views/users/add'),
         meta: {
-          title: 'Thêm mới người dùng',
-          // icon: 'plus',
+          title: 'Thêm mới quản trị viên',
+          permission: 'admin',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'employee/new',
+        name: 'AddEmployee',
+        component: () => import('@/views/users/add'),
+        meta: {
+          title: 'Thêm mới nhân viên',
+          permission: 'employee',
+          roles: ['admin']
+        }
+      },
+      {
+        path: 'customer/new',
+        name: 'AddCustomer',
+        component: () => import('@/views/users/add'),
+        meta: {
+          title: 'Thêm mới khách hàng',
+          permission: 'customer',
           roles: ['admin', 'employee']
         }
       },

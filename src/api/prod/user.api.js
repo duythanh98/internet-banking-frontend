@@ -8,8 +8,8 @@ export default class UserApi extends BaseApi {
   }
 
   getUsers(data) {
-    const { current_page, per_page, keyword } = data;
-    this.setUrl(`/users?page=${current_page || 1}&limit=${per_page || 10}&keyword=${keyword || ''}`);
+    const { current_page, per_page, keyword, permission } = data;
+    this.setUrl(`/users?page=${current_page || 1}&limit=${per_page || 10}&keyword=${keyword || ''}${(typeof (permission) === 'string' && permission !== '') ? ('&permission=' + permission) : ''}`);
 
     return this.get();
   }
