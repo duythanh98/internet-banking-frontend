@@ -1,28 +1,23 @@
 <template>
   <div class="app-container">
     <el-row class="filter-container" type="flex" justify="space-between">
-      <el-col>
-        <!-- <el-form ref="filter" :model="filter" :rules="filterRules" @submit.native.prevent>
-          <el-form-item prop="keyword">
-            <el-input
-              v-model="filter.keyword"
-              class="filter-item"
-              placeholder="Tìm kiếm"
-              style="width: 200px;"
-              @keyup.enter.native="handleFilter"
-            />
-            <el-button
-              v-waves
-              class="filter-item"
-              style="margin-left: 10px;"
-              type="primary"
-              icon="el-icon-search"
-              @click="handleFilter"
-            >Tìm kiếm</el-button>
-          </el-form-item>
-        </el-form> -->
-      </el-col>
+      <el-col />
       <el-col style="text-align: right">
+
+        <el-popconfirm
+          title="Bạn có chắc chắn muốn khoá tài khoản này không?"
+          confirm-button-text="Đồng ý"
+          cancel-button-text="Không"
+          @onConfirm="lock"
+        >
+          <el-button
+            slot="reference"
+            class="filter-item"
+            style="margin-left: 10px;"
+            type="danger"
+            icon="el-icon-lock"
+          >Khoá tài khoản</el-button>
+        </el-popconfirm>
         <el-button
           class="filter-item"
           style="margin-left: 10px;"
@@ -146,6 +141,20 @@ export default {
       if (!this.isLoaded) {
         this.reload();
       }
+    },
+    async lock() {
+      try {
+        await this.$store.dispatch('user/deleteUser', { id: 'me' });
+
+        this.$notify.success({ message: 'Khoá tài khoản thành công. Vui lòng liên hệ với ngân hàng khi cần mở khoá tài khoản', position: 'bottom-right' });
+        this.logout();
+      } catch (err) {
+        this.$notify.error({ message: err instanceof Error ? err.message : 'Có lỗi xảy ra', position: 'bottom-right' });
+      }
+    },
+    async logout() {
+      await this.$store.dispatch('user/logout');
+      this.$router.push(`/login?redirect=${this.$route.fullPath}`);
     },
     handleFilter() {
       this.$refs.filter.validate(valid => {

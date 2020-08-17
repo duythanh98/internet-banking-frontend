@@ -157,6 +157,9 @@ const actions = {
     commit('SET_TOKEN', '');
     commit('SET_ROLES', []);
 
+    commit('SET_INFO', {});
+    commit('SET_ACCOUNT_INFO', {});
+
     dispatch('tagsView/delAllViews', null, { root: true });
 
     removeToken(true);
