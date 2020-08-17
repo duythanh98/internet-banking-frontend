@@ -210,9 +210,12 @@ export default {
           { ...submit, pagination: this.pagination, sortBy: this.sortBy, orderBy: this.orderBy });
 
         if (result.sum && result.transactions) {
-          this.sum = result.sum.reduce((acc, v) => {
+          this.sum = result.sum.deposit.reduce((acc, v) => {
             return acc + +v.amount;
           }, 0);
+          this.sum = result.sum.transfer.reduce((acc, v) => {
+            return acc + +v.amount;
+          }, this.sum);
           this.pagination = result.transactions;
         } else {
           this.pagination = result;

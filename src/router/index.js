@@ -149,6 +149,7 @@ export const asyncRoutes = [
         path: 'admin/new',
         name: 'AddAdmin',
         component: () => import('@/views/users/add'),
+        hidden: true,
         meta: {
           title: 'Thêm mới quản trị viên',
           permission: 'admin',
@@ -159,6 +160,7 @@ export const asyncRoutes = [
         path: 'employee/new',
         name: 'AddEmployee',
         component: () => import('@/views/users/add'),
+        hidden: true,
         meta: {
           title: 'Thêm mới nhân viên',
           permission: 'employee',
@@ -169,6 +171,7 @@ export const asyncRoutes = [
         path: 'customer/new',
         name: 'AddCustomer',
         component: () => import('@/views/users/add'),
+        hidden: true,
         meta: {
           title: 'Thêm mới khách hàng',
           permission: 'customer',
