@@ -37,9 +37,9 @@
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" />
       <el-table-column label="Loại giao dịch" prop="type" align="right" header-align="center">
         <template slot-scope="{row}">
-          <el-tag v-if="row.type === 1" type="primary">Chuyển tiền</el-tag>
-          <el-tag v-else-if="row.type === 3" type="warning">Nhận tiền</el-tag>
-          <el-tag v-else type="info">Không biết</el-tag>
+          <el-tag v-if="row.type === 1" type="primary" style="padding: 0 0">Chuyển tiền</el-tag>
+          <el-tag v-else-if="row.type === 3" type="warning" style="padding: 0 0">Nhận tiền</el-tag>
+          <el-tag v-else type="info" style="padding: 0 0">Không biết</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center">

@@ -4,7 +4,7 @@
       <el-form ref="form" :model="form" :rules="rules" label-position="top" @submit.native.prevent @validate="validated">
         <el-row :gutter="10">
           <el-col :md="8" :xs="8">
-            <el-form-item label="Ngày bắt đầu" prop="from">
+            <el-form-item label="Từ ngày" prop="from">
               <el-date-picker
                 v-model="form.from"
                 format="dd/MM/yyyy"
@@ -16,7 +16,7 @@
             </el-form-item>
           </el-col>
           <el-col :md="8" :xs="8">
-            <el-form-item label="Ngày kết thúc" prop="to">
+            <el-form-item label="Đến trước ngày" prop="to">
               <el-date-picker
                 v-model="form.to"
                 format="dd/MM/yyyy"
@@ -95,9 +95,9 @@
       <el-table-column label="Ngân hàng nhận" prop="to_bank_name" align="center" header-align="center" />
       <el-table-column label="Loại giao dịch" prop="type" align="right" header-align="center">
         <template slot-scope="{row}">
-          <el-tag v-if="row.type === 1" type="primary">Chuyển tiền</el-tag>
-          <el-tag v-else-if="row.type === 3" type="warning">Nhận tiền</el-tag>
-          <el-tag v-else type="info">Không biết</el-tag>
+          <el-tag v-if="row.type === 1" type="primary" style="padding: 0 0">Chuyển tiền</el-tag>
+          <el-tag v-else-if="row.type === 3" type="warning" style="padding: 0 0">Nhận tiền</el-tag>
+          <el-tag v-else type="info" style="padding: 0 0">Không biết</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Số tiền chuyển" prop="amount" align="right" header-align="center" sortable>

@@ -7,19 +7,19 @@
       </el-tab-pane>
 
       <el-tab-pane v-if="isCustomer" name="transaction">
-        <span slot="label"><svg-icon icon-class="info" /> {{ 'Giao dịch' }}</span>
+        <span slot="label"><svg-icon icon-class="info" />{{ 'Giao dịch' }}</span>
         <div id="edit-card">
           <el-tabs v-model="tabs.childrenTab.transaction" type="card" @tab-click="changeTab">
             <el-tab-pane name="transfer">
-              <span slot="label"><svg-icon icon-class="info" /> {{ `Chuyển khoản (${transfer})` }}</span>
+              <span slot="label"><svg-icon icon-class="info" />{{ `Chuyển khoản (${transfer})` }}</span>
               <transfer-transaction ref="transfer" @reload-completed="transferReloadCompleted" />
             </el-tab-pane>
             <el-tab-pane name="debt">
-              <span slot="label"><svg-icon icon-class="info" /> {{ `Thanh toán nợ (${debt})` }}</span>
+              <span slot="label"><svg-icon icon-class="info" />{{ `Thanh toán nợ (${debt})` }}</span>
               <debt-transaction ref="debt" @reload-completed="debtReloadCompleted" />
             </el-tab-pane>
             <el-tab-pane name="deposit">
-              <span slot="label"><svg-icon icon-class="info" /> {{ `Nhận tiền (${deposit})` }}</span>
+              <span slot="label"><svg-icon icon-class="info" />{{ `Nhận tiền (${deposit})` }}</span>
               <deposit-transaction ref="deposit" @reload-completed="depositReloadCompleted" />
             </el-tab-pane>
           </el-tabs>
@@ -28,19 +28,19 @@
 
       <template v-if="isCustomer && isAuthorized">
         <el-tab-pane name="reminders">
-          <span slot="label"><svg-icon icon-class="info" /> {{ 'Nhắc nợ' }}</span>
+          <span slot="label"><svg-icon icon-class="info" />{{ 'Nhắc nợ' }}</span>
           <div id="edit-card">
             <el-tabs v-model="tabs.childrenTab.reminders" type="card" @tab-click="changeTab">
               <el-tab-pane name="debtReminder">
-                <span slot="label"><svg-icon icon-class="info" /> {{ `Nhắc nợ đã nhận (${debtReminder})` }}</span>
+                <span slot="label"><svg-icon icon-class="info" />{{ `Nhắc nợ đã nhận (${debtReminder})` }}</span>
                 <reminder ref="debtReminder" @reload-completed="debtReminderReloadCompleted" />
               </el-tab-pane>
               <el-tab-pane name="reminder">
-                <span slot="label"><svg-icon icon-class="info" /> {{ `Nhắc nợ đã gửi (${reminder})` }}</span>
+                <span slot="label"><svg-icon icon-class="info" />{{ `Nhắc nợ đã gửi (${reminder})` }}</span>
                 <reminder ref="reminder" :reminding="true" @reload-completed="reminderReloadCompleted" />
               </el-tab-pane>
               <el-tab-pane name="unpaidDebt">
-                <span slot="label"><svg-icon icon-class="info" /> {{ `Nhắc nợ chưa thanh toán (${unpaid})` }}</span>
+                <span slot="label"><svg-icon icon-class="info" />{{ `Nhắc nợ chưa thanh toán (${unpaid})` }}</span>
                 <reminder ref="unpaidDebt" :filter-status="unpaidStatus" @reload-completed="unpaidDebtReloadCompleted" />
               </el-tab-pane>
             </el-tabs>
@@ -48,7 +48,7 @@
         </el-tab-pane>
 
         <el-tab-pane name="contact">
-          <span slot="label"><svg-icon icon-class="info" /> {{ 'Liên hệ' }}</span>
+          <span slot="label"><svg-icon icon-class="info" />{{ 'Liên hệ' }}</span>
           <contact ref="contact" @reload-completed="contactReloadCompleted" />
         </el-tab-pane>
 

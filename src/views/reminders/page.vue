@@ -2,15 +2,15 @@
   <div class="app-container">
     <el-tabs v-model="tabs" @tab-click="changeTab">
       <el-tab-pane name="debt">
-        <span slot="label"><svg-icon icon-class="info" /> {{ `Nhắc nợ đã nhận (${debt})` }}</span>
+        <span slot="label"><svg-icon icon-class="info" />{{ `Nhắc nợ đã nhận (${debt})` }}</span>
         <reminder ref="debt" @reload-completed="debtReloadCompleted" />
       </el-tab-pane>
       <el-tab-pane name="reminder">
-        <span slot="label"><svg-icon icon-class="info" /> {{ `Nhắc nợ đã gửi (${reminder})` }}</span>
+        <span slot="label"><svg-icon icon-class="info" />{{ `Nhắc nợ đã gửi (${reminder})` }}</span>
         <reminder ref="reminder" :reminding="true" @reload-completed="reminderReloadCompleted" />
       </el-tab-pane>
       <el-tab-pane name="unpaidDebt">
-        <span slot="label"><svg-icon icon-class="info" /> {{ `Nhắc nợ chưa thanh toán (${unpaid})` }}</span>
+        <span slot="label"><svg-icon icon-class="info" />{{ `Nhắc nợ chưa thanh toán (${unpaid})` }}</span>
         <reminder ref="unpaidDebt" :filter-status="unpaidStatus" @reload-completed="unpaidDebtReloadCompleted" />
       </el-tab-pane>
     </el-tabs>

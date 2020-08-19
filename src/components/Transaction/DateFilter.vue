@@ -12,7 +12,7 @@
     <el-form v-if="timeSpan === '3'" ref="form" :model="form" style="margin-top: 20px" :rules="rules" label-position="top" @submit.native.prevent @validate="validated">
       <el-row :gutter="10">
         <el-col :md="12" :xs="12">
-          <el-form-item label="Ngày bắt đầu" prop="from">
+          <el-form-item label="Từ ngày" prop="from">
             <el-date-picker
               v-model="form.from"
               format="dd/MM/yyyy"
@@ -24,7 +24,7 @@
           </el-form-item>
         </el-col>
         <el-col :md="12" :xs="12">
-          <el-form-item label="Ngày kết thúc" prop="to">
+          <el-form-item label="Đến trước ngày" prop="to">
             <el-date-picker
               v-model="form.to"
               format="dd/MM/yyyy"
